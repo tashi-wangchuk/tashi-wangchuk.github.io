@@ -1,0 +1,195 @@
+/* ==========================================================================
+   style.css — the ONE stylesheet for the whole site.
+   Every page links to this file, so a change here updates everything.
+
+   The design follows ewintang.com: a narrow centered reading column,
+   book-like serif type (Libre Baskerville), sans-serif headings
+   (Fira Sans), lots of white space, almost no decoration.
+
+   The colors are defined once, right below. To recolor the site,
+   edit these lines and nothing else.
+   ========================================================================== */
+
+:root {
+  --text:       #333333;   /* main text: soft black */
+  --background: #ffffff;
+  --accent:     #2a6496;   /* links: change this one line to recolor the site */
+  --muted:      #777777;   /* secondary text: dates, nav links, footer */
+  --rule:       #e6e6e6;   /* thin divider lines */
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Libre Baskerville", "PT Serif", Georgia, "Times New Roman", serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--background);
+}
+
+/* Slightly larger, more generous type on bigger screens */
+@media (min-width: 48em) {
+  body { font-size: 18px; }
+}
+
+/* The centered reading column. 40em ≈ 65–70 characters per line,
+   the comfortable range for reading. On small screens the side
+   padding keeps text off the edges. */
+.measure {
+  max-width: 40em;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+h1, h2, h3, h4 {
+  font-family: "Fira Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+}
+
+h1 { font-size: 1.55rem; margin-top: 1.2em; }
+h2 { font-size: 1.2rem; }
+h3 { font-size: 1.02rem; }
+
+p { margin: 0 0 1em; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+ul { padding-left: 1.4rem; }
+li { margin-bottom: 0.4em; }
+
+hr {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 2.5rem 0;
+}
+
+/* --------------------------------------------------------------------------
+   Header: name on the left (italic serif, like ewintang.com),
+   navigation links on the right. On narrow screens they wrap
+   onto two lines automatically.
+   -------------------------------------------------------------------------- */
+.site-header { padding: 1.75rem 0 0.5rem; }
+
+.site-header .measure {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 1.5rem;
+}
+
+.site-title {
+  font-style: italic;
+  font-size: 1.35rem;
+  color: var(--text);
+  white-space: nowrap;
+}
+.site-title:hover { color: var(--accent); text-decoration: none; }
+
+.site-nav { font-size: 0.92em; }
+.site-nav a { color: var(--muted); margin-left: 0.9rem; }
+.site-nav a:first-child { margin-left: 0; }
+.site-nav a:hover { color: var(--accent); text-decoration: none; }
+.site-nav a.current { color: var(--text); }
+
+main { min-height: 60vh; }
+
+.site-footer {
+  border-top: 1px solid var(--rule);
+  margin-top: 4rem;
+  padding: 1.1rem 0 2.5rem;
+  font-size: 0.82em;
+  color: var(--muted);
+}
+
+/* --------------------------------------------------------------------------
+   Home page: small photo floated to the right of the bio text.
+   On narrow (phone) screens it sits above the text instead.
+   -------------------------------------------------------------------------- */
+.profile-photo {
+  float: right;
+  width: 150px;
+  height: 185px;
+  margin: 0.4rem 0 1rem 1.6rem;
+  border-radius: 2px;
+  object-fit: cover;         /* crops a real photo neatly to this frame */
+}
+
+/* Grey dashed box shown until a real photo replaces it */
+.photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #f4f4f4;
+  border: 1px dashed #cccccc;
+  color: var(--muted);
+  font-family: "Fira Sans", sans-serif;
+  font-size: 0.72rem;
+}
+
+@media (max-width: 34em) {
+  .profile-photo { float: none; display: block; margin: 0 auto 1.25rem; }
+}
+
+/* --------------------------------------------------------------------------
+   CV page: each entry is a "what + when" line, then "where", then
+   an optional description. The date column never wraps mid-date.
+   -------------------------------------------------------------------------- */
+.cv-entry { margin-bottom: 1.4rem; }
+
+.cv-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.25rem 1.5rem;
+  flex-wrap: wrap;
+}
+
+.cv-what { font-weight: 700; }
+.cv-when { color: var(--muted); font-size: 0.88em; white-space: nowrap; }
+.cv-where { font-style: italic; }
+.cv-desc { margin-top: 0.3rem; font-size: 0.95em; }
+
+/* --------------------------------------------------------------------------
+   Publications page
+   -------------------------------------------------------------------------- */
+.pub { margin-bottom: 1.6rem; }
+.pub-title { font-weight: 700; }
+.pub-authors { font-size: 0.95em; }
+.pub-venue { font-size: 0.95em; font-style: italic; }
+.pub-links { font-size: 0.9em; }
+
+/* --------------------------------------------------------------------------
+   Teaching page (davidtong.org style: context paragraph, then PDFs)
+   -------------------------------------------------------------------------- */
+.course { margin-bottom: 3rem; }
+.course-meta {
+  color: var(--muted);
+  font-size: 0.88em;
+  margin: -0.35em 0 1em;
+}
+
+/* --------------------------------------------------------------------------
+   Blog: index list of posts, and the post pages themselves
+   -------------------------------------------------------------------------- */
+.post-list { list-style: none; padding: 0; }
+.post-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 1.25rem;
+  margin-bottom: 0.9em;
+}
+.post-date {
+  color: var(--muted);
+  font-size: 0.88em;
+  min-width: 7.5em;
+}
+
+.post-header .post-date { min-width: 0; }
+.post-header h1 { margin-bottom: 0.15em; }
