@@ -13,7 +13,7 @@ is exactly what visitors see.
 | `index.html` | Home / about page (links to the CV PDF) |
 | `papers.html` | Publications list |
 | `teaching.html` | Lecture notes, davidtong.org style |
-| `blog/index.html` | Blog post list (newest first) |
+| `blog/index.html` | "thoughts" — post list (newest first) |
 | `blog/YYYY-MM-DD-*.html` | One file per blog post |
 | `css/style.css` | The one stylesheet — fonts, colors, spacing |
 | `files/` | PDFs: CV, papers, lecture notes |
