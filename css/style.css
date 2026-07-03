@@ -164,7 +164,7 @@ main { min-height: 60vh; }
 .hero-photo {
   width: 190px;
   height: 190px;
-  border-radius: 10px;       /* its own gently rounded box, not a circle */
+  border-radius: 0;          /* sharp rectangular box, like dominiksobe.com */
   object-fit: cover;
   flex-shrink: 0;
 }
