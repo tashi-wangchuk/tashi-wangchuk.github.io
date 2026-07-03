@@ -2,49 +2,51 @@
    style.css — the ONE stylesheet for the whole site.
    Every page links to this file, so a change here updates everything.
 
-   The design follows ewintang.com: a narrow centered reading column,
-   book-like serif type (Libre Baskerville), sans-serif headings
-   (Fira Sans), lots of white space, almost no decoration.
+   The design follows jaan.io (layout inherited from ewintang.com):
+   a narrow centered reading column, book-like serif type (Crimson Text),
+   sans-serif headings (Source Sans Pro), warm orange links that fade
+   to teal on hover, lots of white space, almost no decoration.
 
    The colors are defined once, right below. To recolor the site,
    edit these lines and nothing else.
    ========================================================================== */
 
 :root {
-  --text:       #333333;   /* main text: soft black */
-  --background: #ffffff;
-  --accent:     #2a6496;   /* links: change this one line to recolor the site */
-  --muted:      #777777;   /* secondary text: dates, nav links, footer */
-  --rule:       #e6e6e6;   /* thin divider lines */
+  --text:         #3b3b3b;   /* main text: soft warm black (jaan.io) */
+  --background:   #ffffff;
+  --accent:       #c66b09;   /* links: jaan.io's warm orange */
+  --accent-hover: #24536B;   /* links on hover: jaan.io's deep teal-blue */
+  --muted:        #a8a8a8;   /* secondary text: dates, nav links, footer */
+  --rule:         #e6e6e6;   /* thin divider lines */
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: "Libre Baskerville", "PT Serif", Georgia, "Times New Roman", serif;
-  font-size: 16px;
-  line-height: 1.65;
+  font-family: "Crimson Text", "Hoefler Text", Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  line-height: 1.6;
   color: var(--text);
   background: var(--background);
 }
 
 /* Slightly larger, more generous type on bigger screens */
 @media (min-width: 48em) {
-  body { font-size: 18px; }
+  body { font-size: 20px; }
 }
 
-/* The centered reading column. 40em ≈ 65–70 characters per line,
-   the comfortable range for reading. On small screens the side
-   padding keeps text off the edges. */
+/* The centered reading column, 680px like jaan.io ≈ 65–70 characters
+   per line, the comfortable range for reading. On small screens the
+   side padding keeps text off the edges. */
 .measure {
-  max-width: 40em;
+  max-width: 680px;
   margin: 0 auto;
   padding: 0 1.25rem;
 }
 
 h1, h2, h3, h4 {
-  font-family: "Fira Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Source Sans Pro", "Open Sans", "Helvetica Neue", Arial, sans-serif;
   font-weight: 600;
   line-height: 1.25;
   margin: 1.8em 0 0.5em;
@@ -56,8 +58,14 @@ h3 { font-size: 1.02rem; }
 
 p { margin: 0 0 1em; }
 
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
+/* jaan.io's signature link behavior: orange, no underline,
+   fading smoothly to teal on hover */
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.25s ease-in-out;
+}
+a:hover { color: var(--accent-hover); }
 
 ul { padding-left: 1.4rem; }
 li { margin-bottom: 0.4em; }
@@ -91,7 +99,10 @@ hr {
 }
 .site-title:hover { color: var(--accent); text-decoration: none; }
 
-.site-nav { font-size: 0.92em; }
+.site-nav {
+  font-family: "Source Sans Pro", "Open Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.85em;
+}
 .site-nav a { color: var(--muted); margin-left: 0.9rem; }
 .site-nav a:first-child { margin-left: 0; }
 .site-nav a:hover { color: var(--accent); text-decoration: none; }
@@ -108,16 +119,16 @@ main { min-height: 60vh; }
 }
 
 /* --------------------------------------------------------------------------
-   Home page: small photo floated to the right of the bio text.
-   On narrow (phone) screens it sits above the text instead.
+   Home page: small round photo (jaan.io style) floated to the right
+   of the bio text. On narrow (phone) screens it sits above the text.
    -------------------------------------------------------------------------- */
 .profile-photo {
   float: right;
   width: 150px;
-  height: 185px;
+  height: 150px;
   margin: 0.4rem 0 1rem 1.6rem;
-  border-radius: 2px;
-  object-fit: cover;         /* crops a real photo neatly to this frame */
+  border-radius: 50%;        /* circular, like jaan.io's thumbnail */
+  object-fit: cover;         /* crops a real photo neatly into the circle */
 }
 
 /* Grey dashed box shown until a real photo replaces it */
@@ -129,7 +140,7 @@ main { min-height: 60vh; }
   background: #f4f4f4;
   border: 1px dashed #cccccc;
   color: var(--muted);
-  font-family: "Fira Sans", sans-serif;
+  font-family: "Source Sans Pro", sans-serif;
   font-size: 0.72rem;
 }
 
