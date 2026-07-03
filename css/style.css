@@ -102,13 +102,19 @@ hr {
   white-space: nowrap;
 }
 
-/* the Dzongkha name beside the latin one, in dark green —
-   the same move as jaan.io's orange 李 */
+/* the Dzongkha name centered below the latin one, in dark green,
+   set in Jomolhari — a typeface modeled on traditional Bhutanese
+   manuscript lettering */
 .site-title-dzo {
+  display: block;
+  text-align: center;
+  font-family: "Jomolhari", "Kailasa", "Noto Serif Tibetan", serif;
   color: #1e6b3f;
   letter-spacing: normal;
-  font-weight: 600;
+  font-weight: 400;      /* Jomolhari only has one weight; keep it pure */
   font-size: 1.05em;
+  line-height: 1.4;
+  margin-top: 0.1em;
 }
 .site-title:hover { color: var(--accent); text-decoration: none; }
 
