@@ -96,10 +96,19 @@ hr {
   font-family: "Source Sans Pro", "Open Sans", "Helvetica Neue", Arial, sans-serif;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.05em;
   font-size: 1.02rem;
   color: var(--text);
   white-space: nowrap;
+}
+
+/* the Dzongkha name beside the latin one, in dark green —
+   the same move as jaan.io's orange 李 */
+.site-title-dzo {
+  color: #1e6b3f;
+  letter-spacing: normal;
+  font-weight: 600;
+  font-size: 1.05em;
 }
 .site-title:hover { color: var(--accent); text-decoration: none; }
 
@@ -148,10 +157,11 @@ main { min-height: 60vh; }
   margin: 0 0 0.6rem;
 }
 
-/* the name inside the greeting, in bold serif — a dominiksobe.com detail */
+/* the name inside the greeting, in slanted bold serif */
 .hero-hi strong {
   font-family: "Crimson Text", "Hoefler Text", Georgia, serif;
   font-weight: 700;
+  font-style: italic;
 }
 
 .hero-sub {
