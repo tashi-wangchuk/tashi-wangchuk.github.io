@@ -290,15 +290,19 @@ main { min-height: 60vh; }
    Publications page. No page heading — the list starts right away,
    so the first entry carries the top spacing.
    -------------------------------------------------------------------------- */
-.pub { margin-bottom: 1.7rem; }
+/* Each entry (paper, review, report) is one tight visual unit:
+   small gap inside it, clearly bigger gap before the next one. */
+.pub { margin-bottom: 2.5rem; }
 .pub:first-of-type { margin-top: 2.75rem; }
 
-/* slanted titles on their own line, a small breath before the details */
+/* slanted titles on their own line, slightly larger than body text */
 .pub-title {
   display: block;
   font-weight: 700;
   font-style: italic;
-  margin-bottom: 0.35rem;
+  font-size: 1.12em;
+  line-height: 1.4;
+  margin-bottom: 0.15rem;
 }
 .pub-authors { font-size: 0.95em; }
 .pub-venue { font-size: 0.95em; font-style: italic; }
