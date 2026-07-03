@@ -10,8 +10,7 @@ is exactly what visitors see.
 
 | File / folder | What it is |
 |---|---|
-| `index.html` | Home / about page |
-| `cv.html` | CV (education, teaching, research, skills) |
+| `index.html` | Home / about page (links to the CV PDF) |
 | `papers.html` | Publications list |
 | `teaching.html` | Lecture notes, davidtong.org style |
 | `blog/index.html` | Blog post list (newest first) |
@@ -25,8 +24,8 @@ explaining what to copy and change.
 
 ## Common edits
 
-- **Update CV**: edit `cv.html` (copy an existing `cv-entry` block), and
-  drop the new PDF into `files/`.
+- **Update CV**: replace `files/Tashi-Wangchuk-CV.pdf` with the new PDF
+  (keep the same filename and no links need to change).
 - **Add a paper**: copy a `pub` block in `papers.html`, newest at the top.
 - **Add lecture notes**: copy a `course` section in `teaching.html`, put
   the PDF in `files/`.
