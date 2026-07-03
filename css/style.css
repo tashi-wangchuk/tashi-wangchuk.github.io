@@ -287,13 +287,22 @@ main { min-height: 60vh; }
 .cv-desc { margin-top: 0.3rem; font-size: 0.95em; }
 
 /* --------------------------------------------------------------------------
-   Publications page
+   Publications page. No page heading — the list starts right away,
+   so the first entry carries the top spacing.
    -------------------------------------------------------------------------- */
-.pub { margin-bottom: 1.6rem; }
-.pub-title { font-weight: 700; }
+.pub { margin-bottom: 1.7rem; }
+.pub:first-of-type { margin-top: 2.75rem; }
+
+/* slanted titles on their own line, a small breath before the details */
+.pub-title {
+  display: block;
+  font-weight: 700;
+  font-style: italic;
+  margin-bottom: 0.35rem;
+}
 .pub-authors { font-size: 0.95em; }
 .pub-venue { font-size: 0.95em; font-style: italic; }
-.pub-links { font-size: 0.9em; }
+.pub-note { color: var(--muted); font-size: 0.95em; }
 
 /* --------------------------------------------------------------------------
    Teaching page (davidtong.org style: context paragraph, then PDFs)
