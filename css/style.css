@@ -15,10 +15,29 @@
   --text:         #3b3b3b;   /* main text: soft warm black (jaan.io) */
   --background:   #fafafa;   /* whisper-of-gray page, so white cards stand out */
   --card:         #ffffff;   /* card background (dominiksobe.com style) */
-  --accent:       #c66b09;   /* links: jaan.io's warm orange */
-  --accent-hover: #24536B;   /* links on hover: jaan.io's deep teal-blue */
+  --accent:       #24536B;   /* links: deep blue */
+  --accent-hover: #c66b09;   /* links on hover: jaan.io's warm orange */
+  --flair:        #c66b09;   /* small warm touches, e.g. the name in the greeting */
   --muted:        #a8a8a8;   /* secondary text: dates, nav links, footer */
   --rule:         #e6e6e6;   /* thin divider lines */
+  --shadow-1:     0 1px 2px rgba(0, 0, 0, 0.03), 0 10px 30px rgba(0, 0, 0, 0.05);
+  --shadow-2:     0 2px 4px rgba(0, 0, 0, 0.04), 0 16px 44px rgba(0, 0, 0, 0.09);
+}
+
+/* Dark theme: applied when the ☾ toggle in the header sets
+   data-theme="dark" on the page (see js/theme.js). Same design,
+   inverted palette — near-black page, softly lit card, warm text. */
+:root[data-theme="dark"] {
+  --text:         #e4e1da;
+  --background:   #0e0e0e;
+  --card:         #191919;
+  --accent:       #8ab4dc;   /* the dark blue, lightened to stay readable */
+  --accent-hover: #e0913a;
+  --flair:        #e0913a;
+  --muted:        #8f8f8f;
+  --rule:         #2b2b2b;
+  --shadow-1:     none;      /* shadows are invisible on black; the border does the work */
+  --shadow-2:     none;
 }
 
 * { box-sizing: border-box; }
@@ -30,6 +49,21 @@ body {
   line-height: 1.6;
   color: var(--text);
   background: var(--background);
+  /* smooth cross-fade when switching light/dark */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* content gently fades up as each page loads */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+main { animation: fade-up 0.5s ease-out both; }
+
+/* respect visitors who turn off animations in their system settings */
+@media (prefers-reduced-motion: reduce) {
+  main { animation: none; }
+  * { transition: none !important; }
 }
 
 /* Slightly larger, more generous type on bigger screens */
@@ -82,7 +116,7 @@ hr {
    navigation links on the right. On narrow screens they wrap
    onto two lines automatically.
    -------------------------------------------------------------------------- */
-.site-header { padding: 1.75rem 0 0.5rem; }
+.site-header { padding: 2.6rem 0 0.5rem; }   /* sits a touch lower on the page */
 
 .site-header .measure {
   display: flex;
@@ -97,19 +131,57 @@ hr {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  font-size: 1.02rem;
+  font-size: 1.15rem;
   color: var(--text);
   white-space: nowrap;
-}.site-title:hover { color: var(--accent); text-decoration: none; }
+}
+.site-title:hover { color: var(--accent); text-decoration: none; }
 
 .site-nav {
   font-family: "Source Sans Pro", "Open Sans", "Helvetica Neue", Arial, sans-serif;
-  font-size: 0.85em;
+  font-size: 0.95em;
 }
-.site-nav a { color: var(--muted); margin-left: 0.9rem; }
+.site-nav a {
+  color: var(--muted);
+  margin-left: 1rem;
+  position: relative;
+}
 .site-nav a:first-child { margin-left: 0; }
 .site-nav a:hover { color: var(--accent); text-decoration: none; }
 .site-nav a.current { color: var(--text); }
+
+/* micro-interaction: a thin underline slides in under nav links on hover */
+.site-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+.site-nav a:hover::after { transform: scaleX(1); }
+
+/* the ☾ / ☀ dark-mode toggle button in the header */
+.theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.35rem 0.45rem;   /* a comfortable tap target, especially on phones */
+  margin: -0.35rem 0 -0.35rem 0.55rem;  /* negative margin keeps the layout tight */
+  font-size: 1em;
+  line-height: 1;
+  color: var(--muted);
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+/* \263E is the moon glyph, \2600 the sun — written as escape codes
+   so the icons survive any file-encoding mishap */
+.theme-toggle::before { content: "\263E"; }
+:root[data-theme="dark"] .theme-toggle::before { content: "\2600"; }
+.theme-toggle:hover { color: var(--accent); transform: rotate(15deg); }
 
 main { min-height: 60vh; }
 
@@ -134,9 +206,16 @@ main { min-height: 60vh; }
   background: var(--card);
   border: 1px solid var(--rule);
   border-radius: 14px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 10px 30px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-1);
   padding: 2rem 2.5rem;
   margin: 2rem 0 2.25rem;
+  /* micro-interaction: the card lifts a millimeter on hover */
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+              background-color 0.3s ease, border-color 0.3s ease;
+}
+.hero-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-2);
 }
 
 .hero-hi {
@@ -147,11 +226,14 @@ main { min-height: 60vh; }
   margin: 0 0 0.6rem;
 }
 
-/* the name inside the greeting, in slanted bold serif */
+/* the name inside the greeting: slanted bold serif, a touch larger,
+   in the warm flair color */
 .hero-hi strong {
   font-family: "Crimson Text", "Hoefler Text", Georgia, serif;
   font-weight: 700;
   font-style: italic;
+  font-size: 1.15em;
+  color: var(--flair);
 }
 
 .hero-sub {
@@ -167,6 +249,12 @@ main { min-height: 60vh; }
   border-radius: 0;          /* sharp rectangular box, like dominiksobe.com */
   object-fit: cover;
   flex-shrink: 0;
+  /* micro-interaction: the B&W photo warms very slightly on hover */
+  transition: filter 0.4s ease, transform 0.4s ease;
+}
+.hero-photo:hover {
+  filter: sepia(0.25) contrast(1.03);
+  transform: scale(1.015);
 }
 
 @media (max-width: 34em) {
