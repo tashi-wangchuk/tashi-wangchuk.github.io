@@ -355,6 +355,13 @@ main { min-height: 60vh; }
   margin: -0.35em 0 1em;
 }
 
+/* quiet style for "coming soon" lines on course pages */
+.placeholder-note {
+  color: var(--muted);
+  font-style: italic;
+  font-size: 0.95em;
+}
+
 /* quiet "coming soon" line for sections that have no material yet */
 .placeholder-note {
   color: var(--muted);
