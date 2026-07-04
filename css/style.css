@@ -309,8 +309,41 @@ main { min-height: 60vh; }
 .pub-note { color: var(--muted); font-size: 0.95em; }
 
 /* --------------------------------------------------------------------------
-   Teaching page (davidtong.org style: context paragraph, then PDFs)
+   Teaching page (davidtong.org style): each course is one clickable
+   card — a soft white box that lifts on hover and leads to that
+   course's own page with all its material.
    -------------------------------------------------------------------------- */
+.course-card {
+  display: block;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  box-shadow: var(--shadow-1);
+  padding: 1.4rem 1.75rem 1.5rem;
+  margin: 2rem 0 1.4rem;
+  color: var(--text);
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+              background-color 0.3s ease, border-color 0.3s ease;
+}
+.course-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-2);
+  text-decoration: none;
+}
+
+.course-title {
+  display: block;
+  font-family: "Source Sans Pro", "Open Sans", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600;
+  font-size: 1.2rem;
+  transition: color 0.25s ease;
+}
+.course-card:hover .course-title { color: var(--accent); }
+
+.course-card .course-meta { display: block; margin: 0.1rem 0 0.6rem; }
+.course-desc { display: block; font-size: 0.95em; }
+
+/* the course's own page (linked from the card) */
 .course { margin-bottom: 3rem; }
 .course-meta {
   color: var(--muted);

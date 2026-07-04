@@ -57,10 +57,8 @@
 
 | `js/theme.js` | The light/dark toggle (the only JavaScript) |- **Add a paper**: copy a `pub` block in `papers.html`, newest at the top.
 
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |- **Add lecture notes**: copy a `course` section in `teaching.html`, put
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |  the PDF in `files/`.
-
+| `js/theme.js` | The light/dark toggle (the only JavaScript) |
+| `js/theme.js` | The light/dark toggle (the only JavaScript) |
 | `js/theme.js` | The light/dark toggle (the only JavaScript) |- **New blog post**: duplicate a file in `blog/`, rename with today's
 
 | `js/theme.js` | The light/dark toggle (the only JavaScript) |  date, then add one line at the top of the list in `blog/index.html`.

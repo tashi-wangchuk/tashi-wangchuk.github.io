@@ -38,44 +38,30 @@
       </p>
 
       <!-- ================================================================
-           HOW TO ADD A COURSE: copy one whole <section class="course">
-           block and edit the title, the meta line, the context
-           paragraph(s), and the PDF list. Put the PDFs themselves in
-           the files/ folder.
+           HOW TO ADD A COURSE (two steps):
+           1. Copy one whole <a class="course-card"> block below and edit
+              the name, meta line, and one-sentence description.
+           2. In the courses/ folder, duplicate an existing course page,
+              rename it, and point the card's href at it. That page holds
+              all the course's material (PDFs live in files/teaching/).
            ================================================================ -->
 
-      <section class="course">
-        <h2>Fundamentals of Physics</h2>
-        <p class="course-meta">Grade 11 · The Royal Academy, Druk Gyalpo's Institute, Pangbisa, Paro · 2026</p>
-
-        <!-- Context paragraph, davidtong.org style: what it covers,
-             the level, prerequisites, anything worth noting. -->
-        <p>
-          Notes for my Grade&nbsp;11 physics course. They are anything but
-          original: my main contribution has been to gather, adapt, and weave
-          together the clearest discussions and explanations I could find in
-          the vast literature, with the emphasis on building physical
-          intuition before formalism. The notes are very much a work in
-          progress — they grow and improve as the course unfolds.
-        </p>
-
-        <ul>
-          <li><a href="files/teaching/Lecture_Notes.pdf">Complete lecture
-          notes</a> — PDF, work in progress (last updated July 2026)</li>
-        </ul>
-      </section>
+      <a class="course-card" href="courses/fundamentals-of-physics.html">
+        <span class="course-title">Fundamentals of Physics</span>
+        <span class="course-meta">Grade 11 · The Royal Academy, Druk Gyalpo's Institute · 2026</span>
+        <span class="course-desc">Lecture notes for Grade&nbsp;11 physics,
+        with the emphasis on building physical intuition before formalism.
+        A work in progress — the notes grow as the course unfolds.</span>
+      </a>
 
       <!-- Template for the next course — copy, un-comment, and fill in:
 
-      <section class="course">
-        <h2>Course title</h2>
-        <p class="course-meta">Level · Institution · Year</p>
-        <p>One short paragraph: what it covers, who it is for,
-           what it assumes.</p>
-        <ul>
-          <li><a href="files/FILENAME.pdf">Complete lecture notes</a></li>
-        </ul>
-      </section>
+      <a class="course-card" href="courses/COURSE-NAME.html">
+        <span class="course-title">Course title</span>
+        <span class="course-meta">Level · Institution · Year</span>
+        <span class="course-desc">One or two sentences: what it covers
+        and who it is for.</span>
+      </a>
 
       -->
 
