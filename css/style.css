@@ -314,6 +314,10 @@ main { min-height: 60vh; }
 }
 a.glow-box:hover { text-decoration: none; }
 
+/* Inside a linked box, the body text keeps its normal color even on
+   hover — only the title glows (see the title rules below). */
+a.glow-box, a.glow-box:hover { color: var(--text); }
+
 /* Each entry (paper, review, report) is one boxed unit with compact
    line spacing inside. */
 .pub {
@@ -402,8 +406,8 @@ a.pub:hover .pub-title { color: var(--accent-hover); }
   font-weight: 600;
   font-size: 1rem;
 }
-a.material-card .material-title { color: var(--accent); transition: color 0.25s ease; }
-a.material-card:hover .material-title { color: var(--accent-hover); }
+a.glow-box .material-title { color: var(--accent); transition: color 0.25s ease; }
+a.glow-box:hover .material-title { color: var(--accent-hover); }
 
 .material-meta {
   display: block;
