@@ -325,7 +325,6 @@ a.glow-box, a.glow-box:hover { color: var(--text); }
   margin-bottom: 1.4rem;
   line-height: 1;       /* tighter than body text (1.6) */
 }
-.pub:first-of-type { margin-top: 2.75rem; }
 
 /* the whole box is the link, so the title carries the link color */
 a.pub .pub-title { color: var(--accent); transition: color 0.25s ease; }
@@ -433,6 +432,9 @@ a.glow-box:hover .material-title { color: var(--accent-hover); }
   font-size: 0.85em;
   margin-top: 0.15rem;
 }
+
+/* thoughts page: each post is a clickable box, newest first */
+.post-card { padding: 1.1rem 1.4rem 1.2rem; margin: 0 0 1.25rem; }
 
 /* quiet "coming soon" line for sections that have no material yet */
 .placeholder-note {
