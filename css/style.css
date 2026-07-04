@@ -297,7 +297,7 @@ main { min-height: 60vh; }
    compact line spacing inside it, clearly bigger gap before the
    next one. */
 .pub {
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   line-height: 1;       /* tighter than body text (1.6) */
 }
 .pub:first-of-type { margin-top: 2.75rem; }
