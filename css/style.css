@@ -298,7 +298,7 @@ main { min-height: 60vh; }
    next one. */
 .pub {
   margin-bottom: 2.5rem;
-  line-height: 1.35;       /* tighter than body text (1.6) */
+  line-height: 1;       /* tighter than body text (1.6) */
 }
 .pub:first-of-type { margin-top: 2.75rem; }
 
