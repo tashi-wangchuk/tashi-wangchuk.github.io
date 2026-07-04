@@ -41,36 +41,50 @@
 
         <h2>complete notes</h2>
 
-        <ul>
-          <li><a href="../files/teaching/Lecture_Notes.pdf">Complete lecture
-          notes</a> (last updated July 2026)</li>
-        </ul>
+        <a class="glow-box material-card" href="../files/teaching/Lecture_Notes.pdf">
+          <span class="material-title">Complete lecture notes</span>
+          <span class="material-meta">PDF · work in progress · last updated July 2026</span>
+        </a>
 
         <h2>individual chapters</h2>
 
-        <!-- When chapter PDFs are ready, put them in files/teaching/
-             and replace this line with a <ul> list like the one above -->
+        <!-- When chapter PDFs are ready, put them in files/teaching/ and
+             replace this line with a <div class="card-grid"> of boxes,
+             like the problem sets below -->
         <p class="placeholder-note">Coming soon — the notes will be split
         into chapter PDFs as they stabilise.</p>
 
         <h2>problem sets</h2>
 
-        <!-- One line per set; add · <a>solutions</a> once a solution
-             PDF exists in files/teaching/assignments/ -->
-        <ul>
-          <li><a href="../files/teaching/assignments/a1.pdf">Assignment 1</a></li>
-          <li><a href="../files/teaching/assignments/a2.pdf">Assignment 2</a></li>
-          <li><a href="../files/teaching/assignments/a3.pdf">Assignment 3</a></li>
-          <li><a href="../files/teaching/assignments/a4.pdf">Assignment 4</a></li>
-          <li><a href="../files/teaching/assignments/a5.pdf">Assignment 5</a></li>
-          <li><a href="../files/teaching/assignments/Practice_Problem_Set_1.pdf">Practice
-            problem set 1</a></li>
-        </ul>
+        <!-- A two-column grid of clickable boxes (one column on phones).
+             To add one: copy an <a class="glow-box mini-card"> block and
+             put the PDF in files/teaching/assignments/ -->
+        <div class="card-grid">
+          <a class="glow-box mini-card" href="../files/teaching/assignments/a1.pdf">
+            <span class="material-title">Assignment 1</span>
+          </a>
+          <a class="glow-box mini-card" href="../files/teaching/assignments/a2.pdf">
+            <span class="material-title">Assignment 2</span>
+          </a>
+          <a class="glow-box mini-card" href="../files/teaching/assignments/a3.pdf">
+            <span class="material-title">Assignment 3</span>
+          </a>
+          <a class="glow-box mini-card" href="../files/teaching/assignments/a4.pdf">
+            <span class="material-title">Assignment 4</span>
+          </a>
+          <a class="glow-box mini-card" href="../files/teaching/assignments/a5.pdf">
+            <span class="material-title">Assignment 5</span>
+          </a>
+          <a class="glow-box mini-card" href="../files/teaching/assignments/Practice_Problem_Set_1.pdf">
+            <span class="material-title">Practice problem set 1</span>
+          </a>
+        </div>
 
         <h2>labs</h2>
 
         <!-- When lab handouts are ready, put them in files/teaching/labs/
-             and replace this line with a <ul> list -->
+             and replace this line with a <div class="card-grid"> of boxes,
+             like the problem sets above -->
         <p class="placeholder-note">Coming soon.</p>
 
         <p><a href="../teaching.html">← all courses</a></p>

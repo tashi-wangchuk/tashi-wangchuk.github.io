@@ -293,14 +293,39 @@ main { min-height: 60vh; }
    Publications page. No page heading — the list starts right away,
    so the first entry carries the top spacing.
    -------------------------------------------------------------------------- */
-/* Each entry (paper, review, report) is one tight visual unit:
-   compact line spacing inside it, clearly bigger gap before the
-   next one. */
+/* --------------------------------------------------------------------------
+   The faint-glow box, reused across the site (papers, course material).
+   Make it an <a> for a fully clickable box, or a <div> when the box
+   needs more than one link inside (links cannot nest in links).
+   -------------------------------------------------------------------------- */
+.glow-box {
+  display: block;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  box-shadow: var(--shadow-1);
+  color: var(--text);
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+              background-color 0.3s ease, border-color 0.3s ease;
+}
+.glow-box:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-2);
+}
+a.glow-box:hover { text-decoration: none; }
+
+/* Each entry (paper, review, report) is one boxed unit with compact
+   line spacing inside. */
 .pub {
-  margin-bottom: 2rem;
+  padding: 1.25rem 1.6rem 1.35rem;
+  margin-bottom: 1.4rem;
   line-height: 1;       /* tighter than body text (1.6) */
 }
 .pub:first-of-type { margin-top: 2.75rem; }
+
+/* the whole box is the link, so the title carries the link color */
+a.pub .pub-title { color: var(--accent); transition: color 0.25s ease; }
+a.pub:hover .pub-title { color: var(--accent-hover); }
 
 /* slanted titles on their own line, slightly larger than body text */
 .pub-title {
@@ -363,6 +388,46 @@ main { min-height: 60vh; }
   color: var(--muted);
   font-style: italic;
   font-size: 0.95em;
+}
+
+/* --------------------------------------------------------------------------
+   Course material boxes: a full-width box for the lecture notes, and a
+   two-column grid of small boxes for assignments (one column on phones).
+   -------------------------------------------------------------------------- */
+.material-card { padding: 1.1rem 1.4rem 1.2rem; margin: 0 0 1.4rem; }
+
+.material-title {
+  display: block;
+  font-family: "Source Sans Pro", "Open Sans", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+}
+a.material-card .material-title { color: var(--accent); transition: color 0.25s ease; }
+a.material-card:hover .material-title { color: var(--accent-hover); }
+
+.material-meta {
+  display: block;
+  color: var(--muted);
+  font-size: 0.85em;
+  margin-top: 0.15rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 0 0 1.4rem;
+}
+@media (max-width: 34em) {
+  .card-grid { grid-template-columns: 1fr; }   /* stack on phones */
+}
+
+.mini-card { padding: 0.9rem 1.2rem 1rem; }
+.mini-card .material-title { font-size: 0.98rem; }
+.mini-card .material-sub {
+  display: inline-block;
+  font-size: 0.85em;
+  margin-top: 0.15rem;
 }
 
 /* quiet "coming soon" line for sections that have no material yet */
