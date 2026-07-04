@@ -291,8 +291,12 @@ main { min-height: 60vh; }
    so the first entry carries the top spacing.
    -------------------------------------------------------------------------- */
 /* Each entry (paper, review, report) is one tight visual unit:
-   small gap inside it, clearly bigger gap before the next one. */
-.pub { margin-bottom: 2.5rem; }
+   compact line spacing inside it, clearly bigger gap before the
+   next one. */
+.pub {
+  margin-bottom: 2.5rem;
+  line-height: 1.35;       /* tighter than body text (1.6) */
+}
 .pub:first-of-type { margin-top: 2.75rem; }
 
 /* slanted titles on their own line, slightly larger than body text */
@@ -301,8 +305,8 @@ main { min-height: 60vh; }
   font-weight: 700;
   font-style: italic;
   font-size: 1.12em;
-  line-height: 1.4;
-  margin-bottom: 0.15rem;
+  line-height: 1.3;
+  margin-bottom: 0.2rem;
 }
 .pub-authors { font-size: 0.95em; }
 .pub-venue { font-size: 0.95em; font-style: italic; }
