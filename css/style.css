@@ -18,6 +18,7 @@
   --accent:       #24536B;   /* links: deep blue */
   --accent-hover: #c66b09;   /* links on hover: jaan.io's warm orange */
   --flair:        #c66b09;   /* small warm touches, e.g. the name in the greeting */
+  --heading:      #1e6b3f;   /* section titles: dark green */
   --muted:        #a8a8a8;   /* secondary text: dates, nav links, footer */
   --rule:         #e6e6e6;   /* thin divider lines */
   --shadow-1:     0 1px 2px rgba(0, 0, 0, 0.03), 0 10px 30px rgba(0, 0, 0, 0.05);
@@ -34,6 +35,7 @@
   --accent:       #8ab4dc;   /* the dark blue, lightened to stay readable */
   --accent-hover: #e0913a;
   --flair:        #e0913a;
+  --heading:      #8ec9a4;   /* the dark green, lightened to stay readable */
   --muted:        #8f8f8f;
   --rule:         #2b2b2b;
   --shadow-1:     none;      /* shadows are invisible on black; the border does the work */
@@ -85,6 +87,7 @@ h1, h2, h3, h4 {
   font-weight: 600;
   line-height: 1.25;
   margin: 1.8em 0 0.5em;
+  color: var(--heading);
 }
 
 h1 { font-size: 1.55rem; margin-top: 1.2em; }
