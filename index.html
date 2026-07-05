@@ -48,15 +48,17 @@
         I am a teacher-researcher at <a href="https://dgi.edu.bt">Druk Gyalpo's Institute</a>, but at heart, I am a physicist.
       </p>
 
-      <!-- PHOTO MARQUEE — a draggable, ever-drifting strip of photos in
-           (rough) chronological order, oldest first. Grab it with the mouse
-           or a finger to scrub at your own pace; let go and it drifts on.
-           Purely decorative (aria-hidden). The motion lives in js/marquee.js.
+      <!-- PHOTO MARQUEE — two rows of photos in (rough) chronological
+           order (top row earlier years, bottom row later), drifting in
+           opposite directions. Grab either row to scrub back to earlier
+           photos; release and the drift resumes. Photos near the pointer
+           swell, macOS-dock style. Purely decorative (aria-hidden). All
+           motion lives in js/marquee.js.
 
-           HOW TO ADD A PHOTO: make a square copy in images/marquee/ (recipe
-           in README.md), name it to sit at the right chronological spot,
-           and add the SAME <img> line in BOTH halves below — every photo
-           appears twice; the second copy is what makes the loop seamless. -->
+           HOW TO ADD A PHOTO: make a square copy in images/marquee/
+           (recipe in README.md), name it for its chronological spot, and
+           add the SAME <img> line in BOTH halves of its row — every photo
+           appears twice; the duplicate half makes the loop seamless. -->
       <div class="photo-marquee" aria-hidden="true">
         <div class="marquee-row">
           <div class="marquee-track">
@@ -83,27 +85,6 @@
             <img src="images/marquee/m-20.jpg" alt="" loading="lazy">
             <img src="images/marquee/m-21.jpg" alt="" loading="lazy">
             <img src="images/marquee/m-22.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-23.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-24.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-25.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-26.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-27.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-28.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-29.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-30.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-31.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-32.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-33.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-34.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-35.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-36.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-37.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-38.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-39.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-40.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-41.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-42.jpg" alt="" loading="lazy">
-            <img src="images/marquee/m-43.jpg" alt="" loading="lazy">
             <!-- second half (identical, for the seamless loop) -->
             <img src="images/marquee/m-01.jpg" alt="" loading="lazy">
             <img src="images/marquee/m-02.jpg" alt="" loading="lazy">
@@ -127,6 +108,33 @@
             <img src="images/marquee/m-20.jpg" alt="" loading="lazy">
             <img src="images/marquee/m-21.jpg" alt="" loading="lazy">
             <img src="images/marquee/m-22.jpg" alt="" loading="lazy">
+          </div>
+        </div>
+        <div class="marquee-row reverse">
+          <div class="marquee-track">
+            <!-- first half -->
+            <img src="images/marquee/m-23.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-24.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-25.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-26.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-27.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-28.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-29.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-30.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-31.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-32.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-33.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-34.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-35.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-36.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-37.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-38.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-39.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-40.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-41.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-42.jpg" alt="" loading="lazy">
+            <img src="images/marquee/m-43.jpg" alt="" loading="lazy">
+            <!-- second half (identical, for the seamless loop) -->
             <img src="images/marquee/m-23.jpg" alt="" loading="lazy">
             <img src="images/marquee/m-24.jpg" alt="" loading="lazy">
             <img src="images/marquee/m-25.jpg" alt="" loading="lazy">

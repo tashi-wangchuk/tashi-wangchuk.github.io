@@ -497,18 +497,28 @@ a.glow-box:hover .material-title { color: var(--accent-hover); }
 .post-header h1 { margin-bottom: 0.15em; }
 
 /* --------------------------------------------------------------------------
-   Photo marquee (about page): one long strip of photos in (rough)
-   chronological order, drifting slowly and endlessly. Visitors can
-   grab the strip and scrub it at their own pace — the motion lives in
-   js/marquee.js; this is just the look. Purely decorative, hidden from
-   screen readers (aria-hidden in the HTML).
+   Photo marquee (about page): two rows of photos in (rough) chronological
+   order — top row earlier years, bottom row later — drifting slowly in
+   opposite directions. Either row can be grabbed and scrubbed, and photos
+   near the pointer swell gently, macOS-dock style. All the motion lives
+   in js/marquee.js; this is just the look. Purely decorative, hidden
+   from screen readers (aria-hidden in the HTML).
    -------------------------------------------------------------------------- */
-.photo-marquee { margin: 2rem 0; }
+.photo-marquee {
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
 
 .marquee-row {
   overflow: hidden;
   cursor: grab;
   touch-action: pan-y;   /* horizontal drags scrub the strip; vertical still scrolls the page */
+  /* padding gives magnified photos room to grow without being clipped;
+     the negative margin cancels it out of the page layout */
+  padding: 1.1rem 0;
+  margin: -1.1rem 0;
   /* fade the edges so photos drift in/out instead of cutting off hard */
   -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
           mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
@@ -533,6 +543,7 @@ a.glow-box:hover .material-title { color: var(--accent-hover); }
   transition: filter 0.3s ease;
   user-select: none;
   -webkit-user-drag: none;
+  transform-origin: center;   /* the dock swell grows from the middle */
 }
 .marquee-track img:hover { filter: grayscale(0); }
 
