@@ -47,8 +47,48 @@
         I am a teacher-researcher at <a href="https://dgi.edu.bt">Druk Gyalpo's Institute</a>, but at heart, I am a physicist.
       </p>
 
+      <!-- PHOTO MARQUEE: two rows of small photos drifting past in
+           opposite directions, looping forever. Purely decorative
+           (aria-hidden), so it's skipped by screen readers.
+
+           HOW TO ADD/SWAP A PHOTO: crop it to a square and drop it in
+           images/marquee/ (see the recipe in README.md), then add or
+           replace an <img> line below — same photo appears TWICE in
+           its row (that's what makes the loop seamless, don't remove
+           the second copy). -->
+      <div class="photo-marquee" aria-hidden="true">
+        <div class="marquee-row">
+          <div class="marquee-track">
+            <img src="images/marquee/photo-01.jpg" alt="">
+            <img src="images/marquee/photo-02.jpg" alt="">
+            <img src="images/marquee/photo-03.jpg" alt="">
+            <img src="images/marquee/photo-04.jpg" alt="">
+            <img src="images/marquee/photo-05.jpg" alt="">
+            <img src="images/marquee/photo-01.jpg" alt="">
+            <img src="images/marquee/photo-02.jpg" alt="">
+            <img src="images/marquee/photo-03.jpg" alt="">
+            <img src="images/marquee/photo-04.jpg" alt="">
+            <img src="images/marquee/photo-05.jpg" alt="">
+          </div>
+        </div>
+        <div class="marquee-row reverse">
+          <div class="marquee-track">
+            <img src="images/marquee/photo-06.jpg" alt="">
+            <img src="images/marquee/photo-07.jpg" alt="">
+            <img src="images/marquee/photo-08.jpg" alt="">
+            <img src="images/marquee/photo-09.jpg" alt="">
+            <img src="images/marquee/photo-10.jpg" alt="">
+            <img src="images/marquee/photo-06.jpg" alt="">
+            <img src="images/marquee/photo-07.jpg" alt="">
+            <img src="images/marquee/photo-08.jpg" alt="">
+            <img src="images/marquee/photo-09.jpg" alt="">
+            <img src="images/marquee/photo-10.jpg" alt="">
+          </div>
+        </div>
+      </div>
+
       <p>
-        I did my undergrad in Math-Physics at the 
+        I did my undergrad in Math-Physics at the
         <a href="https://www.unb.ca">University of New Brunswick</a> in Canada. 
         While there, I was fortunate to receive the Dr. Margot Roach Scholarship and work at the 
         <a href="https://mri.ext.unb.ca">MRI Research Centre</a> under Bruce Balcom. You can find my CV 

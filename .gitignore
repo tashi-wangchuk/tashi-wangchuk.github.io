@@ -3,3 +3,11 @@
 # full-resolution photo originals stay on this Mac, not on GitHub
 images/A6704085.jpeg
 images/me.jpeg
+
+# raw camera-roll originals for the about-page photo marquee — only the
+# small processed copies in images/marquee/ are meant to be public
+images/*.jpeg
+images/*.jpg
+images/*.heic
+!images/me.jpg
+!images/marquee/*.jpg

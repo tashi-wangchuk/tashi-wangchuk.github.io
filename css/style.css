@@ -495,3 +495,70 @@ a.glow-box:hover .material-title { color: var(--accent-hover); }
 
 .post-header .post-date { min-width: 0; }
 .post-header h1 { margin-bottom: 0.15em; }
+
+/* --------------------------------------------------------------------------
+   Photo marquee (about page): two rows of small photos drifting past,
+   one row left, one row right, looping forever. Purely decorative, so
+   the whole thing is hidden from screen readers (aria-hidden in the HTML).
+
+   HOW IT LOOPS SEAMLESSLY: each row's HTML lists the same photos TWICE
+   in a row. The animation slides the row left by exactly half its total
+   width — the point at which the (identical) second half lines up
+   exactly where the first half started, so the jump back to 0% is
+   invisible.
+   -------------------------------------------------------------------------- */
+.photo-marquee {
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.marquee-row {
+  overflow: hidden;
+  /* fade the row's edges so photos drift in/out instead of cutting off hard */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 0.75rem;
+  animation: marquee-drift 32s linear infinite;
+}
+/* the second row drifts the opposite way */
+.marquee-row.reverse .marquee-track {
+  animation-direction: reverse;
+}
+
+@keyframes marquee-drift {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }   /* half the track = one full set of photos */
+}
+
+.marquee-track img {
+  width: 108px;
+  height: 108px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: var(--shadow-1);
+  flex-shrink: 0;
+  filter: grayscale(0.15);
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+/* hovering a photo pauses its whole row, so a passerby can actually look */
+.marquee-row:hover .marquee-track { animation-play-state: paused; }
+.marquee-track img:hover {
+  filter: grayscale(0);
+  transform: scale(1.06);
+}
+
+@media (max-width: 34em) {
+  .marquee-track img { width: 86px; height: 86px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}
