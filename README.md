@@ -35,15 +35,15 @@ explaining what to copy and change.
 - **New blog post**: duplicate a file in `blog/`, rename with today's
   date, then add one `post-card` box at the top of `blog/index.html`.
 - **Change colors**: edit the variables at the top of `css/style.css`.
-- **Swap a photo in the about-page marquee**: crop the new photo to a
-  square (any image editor, or on a Mac:
-  `sips -c HEIGHT WIDTH --cropOffset Y X photo.jpg --out square.jpg`
-  where HEIGHT/WIDTH are both the shorter side of the original), then
-  `sips -Z 400 square.jpg --out images/marquee/photo-XX.jpg` to shrink
-  it. Keep the filename the same as what it's replacing so the two
-  `<img>` references in `index.html` still point at it — each photo
-  appears twice in its row on purpose, that's what makes the loop
-  seamless.
+- **Add a photo to the about-page marquee**: crop it to a square (any
+  image editor, or on a Mac:
+  `sips -s format jpeg -c SIDE SIDE --cropOffset Y X photo.jpg --out sq.jpg`
+  where SIDE is the shorter side of the original), shrink it with
+  `sips -Z 340 sq.jpg --out images/marquee/m-XX.jpg`, and pick XX so it
+  sits at the right chronological spot. Then add the same `<img>` line
+  in BOTH halves of the marquee block in `index.html` — every photo
+  appears twice; the duplicate half is what makes the endless loop
+  seamless. The drift-and-drag motion lives in `js/marquee.js`.
 
 ## Publish changes
 
