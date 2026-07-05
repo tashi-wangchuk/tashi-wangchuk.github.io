@@ -1,86 +1,56 @@
+# tashi-wangchuk.github.io
 
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |# tashi-wangchuk.github.io
+My personal academic website, served by GitHub Pages at
+**https://tashi-wangchuk.github.io**.
 
+Plain HTML and CSS — no build step, no framework. What's in this folder
+is exactly what visitors see.
+
+## Map of the site
+
+| File / folder | What it is |
+|---|---|
+| `index.html` | Home / about page (links to the CV PDF) |
+| `papers.html` | Publications list |
+| `teaching.html` | Lecture notes, davidtong.org style |
+| `blog/index.html` | "thoughts" — post list (newest first) |
+| `blog/YYYY-MM-DD-*.html` | One file per blog post |
+| `courses/*.html` | One page per course, linked from `teaching.html` |
+| `css/style.css` | The one stylesheet — fonts, colors, spacing |
 | `js/theme.js` | The light/dark toggle (the only JavaScript) |
+| `files/` | PDFs: CV, papers, lecture notes, assignments |
+| `images/` | Photos |
 
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |My personal academic website, served by GitHub Pages at
+Every editable spot in the HTML is marked with a `<!-- comment -->`
+explaining what to copy and change.
 
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |**https://tashi-wangchuk.github.io**.
+## Common edits
 
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |
+- **Update CV**: replace `files/Tashi-Wangchuk-CV.pdf` with the new PDF
+  (keep the same filename and no links need to change).
+- **Add a paper**: copy a `pub` block in `papers.html`, newest at the top.
+- **Add a course**: copy a `course-card` block in `teaching.html`, then
+  duplicate a page in `courses/` and point the card at it. PDFs go in
+  `files/teaching/`.
+- **New blog post**: duplicate a file in `blog/`, rename with today's
+  date, then add one `post-card` box at the top of `blog/index.html`.
+- **Change colors**: edit the variables at the top of `css/style.css`.
+- **Swap a photo in the about-page marquee**: crop the new photo to a
+  square (any image editor, or on a Mac:
+  `sips -c HEIGHT WIDTH --cropOffset Y X photo.jpg --out square.jpg`
+  where HEIGHT/WIDTH are both the shorter side of the original), then
+  `sips -Z 400 square.jpg --out images/marquee/photo-XX.jpg` to shrink
+  it. Keep the filename the same as what it's replacing so the two
+  `<img>` references in `index.html` still point at it — each photo
+  appears twice in its row on purpose, that's what makes the loop
+  seamless.
 
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |Plain HTML and CSS — no build step, no framework. What's in this folder
+## Publish changes
 
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |is exactly what visitors see.
+```bash
+git add .
+git commit -m "Describe what you changed"
+git push
+```
 
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |## Map of the site
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) || File / folder | What it is |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) ||---|---|
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) || `index.html` | Home / about page (links to the CV PDF) |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) || `papers.html` | Publications list |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) || `teaching.html` | Lecture notes, davidtong.org style |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) || `blog/index.html` | "thoughts" — post list (newest first) |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) || `blog/YYYY-MM-DD-*.html` | One file per blog post |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) || `css/style.css` | The one stylesheet — fonts, colors, spacing |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) || `files/` | PDFs: CV, papers, lecture notes |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) || `images/` | Photos |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |Every editable spot in the HTML is marked with a `<!-- comment -->`
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |explaining what to copy and change.
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |## Common edits
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |- **Update CV**: replace `files/Tashi-Wangchuk-CV.pdf` with the new PDF
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |  (keep the same filename and no links need to change).
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |- **Add a paper**: copy a `pub` block in `papers.html`, newest at the top.
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |- **New blog post**: duplicate a file in `blog/`, rename with today's
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |  date, then add one line at the top of the list in `blog/index.html`.
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |- **Change colors**: edit the variables at the top of `css/style.css`.
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |## Publish changes
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |```bash
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |git add .
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |git commit -m "Describe what you changed"
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |git push
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |```
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |
-
-| `js/theme.js` | The light/dark toggle (the only JavaScript) |The live site updates a minute or two after `git push`.
+The live site updates a minute or two after `git push`.
