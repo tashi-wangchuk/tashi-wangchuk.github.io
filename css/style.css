@@ -363,13 +363,14 @@ a.glow-box, a.glow-box:hover { color: var(--text); }
 a.pub .pub-title { color: var(--accent); transition: color 0.25s ease; }
 a.pub:hover .pub-title { color: var(--accent-hover); }
 
-/* slanted titles on their own line, same size as the body text below them */
+/* slanted titles on their own line, exactly the same size as the
+   author/venue lines below them — italic and bold are what set them apart */
 .pub-title {
   display: block;
   font-weight: 700;
   font-style: italic;
-  font-size: 1em;
-  line-height: 1.3;
+  font-size: 0.95em;
+  line-height: 1.2;
   margin-bottom: 0.2rem;
 }
 .pub-authors { font-size: 0.95em; }
