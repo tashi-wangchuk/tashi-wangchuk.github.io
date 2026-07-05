@@ -80,8 +80,8 @@
 body {
   margin: 0;
   font-family: "Computer Modern", "Hoefler Text", Georgia, "Times New Roman", serif;
-  font-size: 18px;
-  line-height: 1.6;
+  font-size: 15px;
+  line-height: 1.5;
   color: var(--text);
   background: var(--background);
   /* smooth cross-fade when switching light/dark */
