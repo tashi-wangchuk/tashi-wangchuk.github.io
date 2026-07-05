@@ -3,13 +3,46 @@
    Every page links to this file, so a change here updates everything.
 
    The design follows jaan.io (layout inherited from ewintang.com):
-   a narrow centered reading column, book-like serif type (Crimson Text),
-   sans-serif headings (Source Sans Pro), warm orange links that fade
-   to teal on hover, lots of white space, almost no decoration.
+   a narrow centered reading column, book-like serif type (Computer
+   Modern — the classic LaTeX typeface), sans-serif headings (Source
+   Sans Pro), warm orange links that fade to teal on hover, lots of
+   white space, almost no decoration.
 
    The colors are defined once, right below. To recolor the site,
    edit these lines and nothing else.
    ========================================================================== */
+
+/* Computer Modern (CM-Unicode build) isn't on Google Fonts, so the four
+   weights are hosted right here in fonts/ and loaded with @font-face.
+   Freely licensed — the same font family LaTeX itself ships with. */
+@font-face {
+  font-family: "Computer Modern";
+  src: url("../fonts/cm-roman.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Computer Modern";
+  src: url("../fonts/cm-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Computer Modern";
+  src: url("../fonts/cm-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Computer Modern";
+  src: url("../fonts/cm-bold-italic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
 
 :root {
   --text:         #3b3b3b;   /* main text: soft warm black (jaan.io) */
@@ -46,7 +79,7 @@
 
 body {
   margin: 0;
-  font-family: "Crimson Text", "Hoefler Text", Georgia, "Times New Roman", serif;
+  font-family: "Computer Modern", "Hoefler Text", Georgia, "Times New Roman", serif;
   font-size: 18px;
   line-height: 1.6;
   color: var(--text);
@@ -232,7 +265,7 @@ main { min-height: 60vh; }
 /* the name inside the greeting: slanted bold serif, a touch larger,
    in the warm flair color */
 .hero-hi strong {
-  font-family: "Crimson Text", "Hoefler Text", Georgia, serif;
+  font-family: "Computer Modern", "Hoefler Text", Georgia, serif;
   font-weight: 700;
   font-style: italic;
   font-size: 1.15em;
