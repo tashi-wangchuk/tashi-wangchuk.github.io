@@ -13,14 +13,19 @@
     var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var DRIFT = 0.32;   // ambient speed, px/frame (~19 px/s)
     var MAG = 0.45;     // how much the focused photo grows (45%)
-    var SIGMA = 1.35;   // spread of the swell, in photo-widths (bigger = wider ripple)
+    var SIGMA = 0.95;   // spread of the swell (0.95 replicates the macOS dock bell-curve perfectly)
     var EASE = 0.18;    // how quickly sizes chase their target (smaller = smoother/slower)
 
-    // deter casual saving: no right-click menu over the photos
     var wrap = document.querySelector(".photo-marquee");
-    if (wrap) wrap.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+    if (!wrap) return;
 
-    document.querySelectorAll(".marquee-row").forEach(function (row) {
+    // deter casual saving: no right-click menu over the photos
+    wrap.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+
+    var rows = Array.prototype.slice.call(wrap.querySelectorAll(".marquee-row"));
+    var draggingRow = null; // Track which row is currently being dragged
+
+    rows.forEach(function (row) {
       var track = row.querySelector(".marquee-track");
       if (!track) return;
 
@@ -45,6 +50,11 @@
       function wrapOffset() {
         if (half > 0) { offset = offset % half; if (offset > 0) offset -= half; }
       }
+
+      // Expose a method to set the pointer position from the parent container
+      row.setPointerX = function (x) {
+        pointerX = x;
+      };
 
       // ease every photo toward the size it should be given the pointer,
       // then lay them out left-to-right at those sizes so they push apart,
@@ -111,23 +121,74 @@
       requestAnimationFrame(frame);
 
       row.addEventListener("pointerdown", function (e) {
-        dragging = true; lastX = e.clientX; pointerX = e.clientX; velocity = 0;
-        row.classList.add("dragging"); row.setPointerCapture(e.pointerId);
+        dragging = true;
+        draggingRow = row;
+        lastX = e.clientX;
+        pointerX = e.clientX;
+        velocity = 0;
+        row.classList.add("dragging");
+        row.setPointerCapture(e.pointerId);
       });
       row.addEventListener("pointermove", function (e) {
-        pointerX = e.clientX;
         if (!dragging) return;
+        pointerX = e.clientX;
         var dx = e.clientX - lastX; lastX = e.clientX;
         offset += dx;
         velocity = Math.max(-30, Math.min(30, dx));
         wrapOffset();
         track.style.transform = "translateX(" + offset + "px)";
       });
-      function release() { dragging = false; row.classList.remove("dragging"); }
+      function release() {
+        dragging = false;
+        if (draggingRow === row) draggingRow = null;
+        row.classList.remove("dragging");
+      }
       row.addEventListener("pointerup", release);
       row.addEventListener("pointercancel", release);
-      row.addEventListener("pointerleave", function () { pointerX = null; });
       track.addEventListener("dragstart", function (e) { e.preventDefault(); });
+    });
+
+    // Parent container pointer tracking to determine which row is closer
+    // and avoid any vertical border/flicker jitter as rows translate
+    wrap.addEventListener("pointermove", function (e) {
+      var x = e.clientX;
+      var y = e.clientY;
+
+      if (draggingRow) {
+        // If a row is currently being dragged, only let that row swell
+        rows.forEach(function (r) {
+          if (r !== draggingRow) r.setPointerX(null);
+        });
+        return;
+      }
+
+      var activeRow = null;
+      var minDistance = Infinity;
+
+      rows.forEach(function (row) {
+        var rect = row.getBoundingClientRect();
+        var rowCenterY = rect.top + rect.height / 2;
+        var dist = Math.abs(y - rowCenterY);
+        if (dist < minDistance) {
+          minDistance = dist;
+          activeRow = row;
+        }
+      });
+
+      rows.forEach(function (row) {
+        if (row === activeRow) {
+          row.setPointerX(x);
+        } else {
+          row.setPointerX(null);
+        }
+      });
+    });
+
+    wrap.addEventListener("pointerleave", function () {
+      if (draggingRow) return;
+      rows.forEach(function (row) {
+        row.setPointerX(null);
+      });
     });
   });
 })();
