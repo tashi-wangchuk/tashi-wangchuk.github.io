@@ -202,22 +202,38 @@ hr {
 .site-nav a:hover::after { transform: scaleX(1); }
 
 /* the ☾ / ☀ dark-mode toggle button in the header */
+/* Light/dark switch: a sliding pill. The button is the track; its
+   ::before is the knob, which slides right (and the track turns blue)
+   when dark mode is on. */
 .theme-toggle {
-  background: none;
+  position: relative;
+  display: inline-block;
+  vertical-align: -0.35em;      /* line the pill up with the nav text */
+  width: 34px;
+  height: 20px;
+  margin-left: 0.9rem;
+  padding: 0;
   border: none;
+  border-radius: 999px;
   cursor: pointer;
-  padding: 0.35rem 0.45rem;   /* a comfortable tap target, especially on phones */
-  margin: -0.35rem 0 -0.35rem 0.55rem;  /* negative margin keeps the layout tight */
-  font-size: 1em;
-  line-height: 1;
-  color: var(--muted);
-  transition: color 0.25s ease, transform 0.25s ease;
+  background: var(--rule);      /* off/light: quiet grey track */
+  transition: background-color 0.25s ease;
 }
-/* \263E is the moon glyph, \2600 the sun — written as escape codes
-   so the icons survive any file-encoding mishap */
-.theme-toggle::before { content: "\263E"; }
-:root[data-theme="dark"] .theme-toggle::before { content: "\2600"; }
-.theme-toggle:hover { color: var(--accent); transform: rotate(15deg); }
+.theme-toggle::before {         /* the knob */
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s ease;
+}
+/* dark mode on: blue track, knob slid to the right */
+:root[data-theme="dark"] .theme-toggle { background: var(--accent); }
+:root[data-theme="dark"] .theme-toggle::before { transform: translateX(14px); }
 
 main { min-height: 60vh; }
 
