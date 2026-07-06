@@ -528,23 +528,32 @@ a.glow-box:hover .material-title { color: var(--accent-hover); }
    from screen readers (aria-hidden in the HTML).
    -------------------------------------------------------------------------- */
 .photo-marquee {
-  margin: 2rem 0;
+  /* generous top/bottom room so the dock swell grows into whitespace,
+     never into the text above or below */
+  margin: 3rem 0;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 1rem;
+  transition: gap 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.photo-marquee:hover {
+  gap: 2.2rem;
 }
 
 .marquee-row {
-  overflow: hidden;
+  /* clip only horizontally, so a photo swelling upward/downward isn't
+     cut off — the rows grow away from each other (see transform-origin) */
+  overflow-x: clip;
+  overflow-y: visible;
   cursor: grab;
   touch-action: pan-y;   /* horizontal drags scrub the strip; vertical still scrolls the page */
-  /* padding gives magnified photos room to grow without being clipped;
-     the negative margin cancels it out of the page layout */
-  padding: 1.75rem 0;
-  margin: -1.75rem 0;
-  /* fade the edges so photos drift in/out instead of cutting off hard */
+  /* fade the left/right edges; oversize the mask vertically (400%) so it
+     stays opaque over the swell and doesn't re-clip it */
   -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
           mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-size: 100% 400%;  mask-size: 100% 400%;
+  -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
 }
 .marquee-row.dragging { cursor: grabbing; }
 
@@ -555,6 +564,12 @@ a.glow-box:hover .material-title { color: var(--accent-hover); }
   will-change: transform;
 }
 
+/* the two rows grow AWAY from each other: the top row swells upward
+   (anchored at its bottom edge), the bottom row downward — so the gap
+   between them never closes and they can't overlap */
+.marquee-row:not(.reverse) .marquee-track img { transform-origin: center bottom; }
+.marquee-row.reverse       .marquee-track img { transform-origin: center top; }
+
 .marquee-track img {
   width: 108px;
   height: 108px;
@@ -563,7 +578,6 @@ a.glow-box:hover .material-title { color: var(--accent-hover); }
   box-shadow: var(--shadow-1);
   flex-shrink: 0;
   filter: grayscale(0.15);
-  transform-origin: center;   /* the dock swell grows from the middle */
   /* deter casual saving: no long-press "Save Image" menu, no drag-out,
      no selection. (Screenshots still work — nothing can stop those.) */
   -webkit-touch-callout: none;
