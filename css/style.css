@@ -540,8 +540,8 @@ a.glow-box:hover .material-title { color: var(--accent-hover); }
   touch-action: pan-y;   /* horizontal drags scrub the strip; vertical still scrolls the page */
   /* padding gives magnified photos room to grow without being clipped;
      the negative margin cancels it out of the page layout */
-  padding: 1.1rem 0;
-  margin: -1.1rem 0;
+  padding: 1.75rem 0;
+  margin: -1.75rem 0;
   /* fade the edges so photos drift in/out instead of cutting off hard */
   -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
           mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
@@ -563,12 +563,14 @@ a.glow-box:hover .material-title { color: var(--accent-hover); }
   box-shadow: var(--shadow-1);
   flex-shrink: 0;
   filter: grayscale(0.15);
-  transition: filter 0.3s ease;
-  user-select: none;
-  -webkit-user-drag: none;
   transform-origin: center;   /* the dock swell grows from the middle */
+  /* deter casual saving: no long-press "Save Image" menu, no drag-out,
+     no selection. (Screenshots still work — nothing can stop those.) */
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;       /* the row handles all pointer work, not the images */
 }
-.marquee-track img:hover { filter: grayscale(0); }
 
 @media (max-width: 34em) {
   .marquee-track img { width: 86px; height: 86px; }

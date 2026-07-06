@@ -11,3 +11,4 @@ images/*.jpg
 images/*.heic
 !images/me.jpg
 !images/marquee/*.jpg
+images/*.png
