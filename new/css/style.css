@@ -1,0 +1,101 @@
+/* ==========================================================================
+   new/css/style.css — Styles for the experimental 3D Helical Photo Gallery.
+   Extends the main site stylesheet (css/style.css).
+   ========================================================================== */
+
+@import "../../css/style.css";
+
+/* --------------------------------------------------------------------------
+   Full-Width 3D Helical Stage (Claude Science inspired)
+   -------------------------------------------------------------------------- */
+.helix-stage {
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  height: 520px;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+  touch-action: pan-y;
+  /* Smooth horizontal edge fading */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+
+.helix-stage:active,
+.helix-stage.dragging {
+  cursor: grabbing;
+}
+
+/* Central 3D coordinate space */
+.helix-world {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Individual 3D floating photo card */
+.helix-card {
+  position: absolute;
+  top: -80px;
+  left: -110px;
+  width: 220px;
+  height: 160px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, outline 0.25s ease;
+  pointer-events: auto;
+}
+
+.helix-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* Dark mode enhancements for 3D card depth & glowing borders */
+:root[data-theme="dark"] .helix-card {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.helix-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.4), 0 0 0 2px var(--accent);
+  z-index: 99999 !important;
+}
+
+/* Mobile responsive scaling */
+@media (max-width: 48em) {
+  .helix-stage {
+    height: 420px;
+  }
+  .helix-card {
+    top: -65px;
+    left: -90px;
+    width: 180px;
+    height: 130px;
+  }
+}
