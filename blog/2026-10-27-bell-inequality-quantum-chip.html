@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Understanding Bell inequality violations on a quantum chip — Tashi Wangchuk</title>
+  <meta name="description" content="From Einstein's objection to a CHSH test on a free cloud quantum processor (S = 2.085 ± 0.012), and an attempt at the triangle network that turned up two gate faults.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap">
+  <link rel="stylesheet" href="../css/style.css?v=3">
+  <script src="../js/theme.js"></script>
+
+  <!-- Maths: KaTeX renders everything written between $...$ (inline)
+       and \[...\] (display) after the page loads. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      renderMathInElement(document.querySelector(".post-body"), {
+        delimiters: [
+          {left: "\\[", right: "\\]", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        macros: {
+          "\\ket": "\\left|#1\\right\\rangle",
+          "\\bra": "\\left\\langle#1\\right|"
+        },
+        throwOnError: false
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="measure">
+      <a class="site-title" href="../index.html">Tashi Wangchuk</a>
+      <nav class="site-nav">
+        <a href="../index.html">about</a>
+        <a href="../papers.html">papers</a>
+        <a href="../teaching.html">teaching</a>
+        <a href="index.html" class="current">thoughts</a>
+        <button class="theme-toggle" aria-label="Switch between light and dark background"></button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="measure post-body">
+
+      <div class="post-header">
+        <h1>Understanding Bell inequality violations on a quantum chip</h1>
+        <p class="post-date">October 27, 2026</p>
+      </div>
+
+      <p class="post-note">
+        This is the web version of my preprint
+        (<a href="../files/preprints/wangchuk-bell-inequality-quantum-chip.pdf">PDF</a>,
+        September 2026). The content is the same. It is a draft and has not been
+        peer reviewed; corrections are very welcome at
+        <a href="mailto:tashiwangchuk@academy.bt">tashiwangchuk@academy.bt</a>.
+      </p>
+
+      <p class="post-lede">
+        This is a written record of something I set out to understand for myself:
+        why Einstein thought quantum mechanics was incomplete, how John Bell turned
+        that opinion into a measurable number, and what happens when you measure
+        that number on a quantum computer you can reach over the internet. I derive
+        the local bound $S \le 2$, the quantum correlation $E(a,b) = \cos(a-b)$ and
+        the quantum maximum $2\sqrt2$, explain why a single chip cannot close the
+        loopholes, and report my own test on Tuna-17, a 17-qubit processor in Delft
+        that anyone can use for free: $S = 2.085 \pm 0.012$, a violation by 7.1
+        standard deviations. Then I try the experiment I actually wanted to do, the
+        triangle network. It does not work, and the reasons turned out to be more
+        interesting than a success would have been.
+      </p>
+
+      <details class="toc">
+        <summary>Contents</summary>
+        <ol>
+          <li><a href="#why">Why I am writing this</a></li>
+          <li><a href="#epr">Einstein's objection</a></li>
+          <li><a href="#local">The local bound: why $S \le 2$</a></li>
+          <li><a href="#quantum">The quantum correlation: $E(a,b) = \cos(a-b)$</a></li>
+          <li><a href="#tsirelson">Reaching $S = 2\sqrt2$</a></li>
+          <li><a href="#loopholes">Loopholes, and why a chip cannot close them</a></li>
+          <li><a href="#experiment">My experiment: CHSH on Tuna-17</a></li>
+          <li><a href="#network">Beyond one source: the triangle network</a></li>
+          <li><a href="#triangle">Trying it: two machines and two faults</a></li>
+          <li><a href="#learned">What I learned</a></li>
+          <li><a href="#references">References</a></li>
+        </ol>
+      </details>
+
+      <!-- ============================================================ -->
+      <h2 id="why">1. Why I am writing this</h2>
+
+      <p>
+        I teach grade 11 physics in Paro. My undergraduate research was about
+        measuring the electrical conductivity of liquids without touching them,
+        using the way a sample loads a radio-frequency coil. It was careful,
+        practical work, and I liked it. But teaching has reminded me of something I
+        had half forgotten: what I enjoy most is the moment a strange idea becomes
+        concrete enough to compute with.
+      </p>
+      <p>
+        Bell's theorem is the strangest idea I know that also comes with a number
+        attached. Einstein said quantum mechanics must be missing something. Bell
+        showed that this opinion, made precise, predicts an inequality that
+        experiments can check. The experiments say Einstein was wrong, and the 2022
+        Nobel Prize in Physics went to three of the people who ran them
+        <a class="cite" href="#ref-1">[1]</a>. What I did not appreciate until this
+        year is that the same experiment can now be run by anyone with a laptop, on
+        a superconducting processor that a university laboratory in Delft makes
+        available for free.
+      </p>
+      <p>
+        So I ran it. This article is the path from the 1935 argument to my own data,
+        written at the level I wish I had found when I started: undergraduate
+        quantum mechanics, no more. Where I had to simplify, I say so. Where a
+        historical claim is beyond what I could verify, I have marked it in the
+        source file.
+      </p>
+
+      <!-- ============================================================ -->
+      <h2 id="epr">2. Einstein's objection</h2>
+
+      <p>
+        Quantum mechanics describes a system by a state, and the state gives
+        probabilities for measurement outcomes. For a single spin-$\tfrac12$
+        particle, the state $\ket{0}$ means "spin up along $z$". If I measure the
+        spin along $z$, I get up, every time. If I measure it along $x$, I get up or
+        down with probability one half each, and the theory does not say which. The
+        standard reading is that the theory is not hiding anything: the $x$-outcome
+        is genuinely undetermined before I look.
+      </p>
+      <p>
+        Einstein, Podolsky and Rosen (EPR) did not accept this reading
+        <a class="cite" href="#ref-2">[2]</a>. Their argument uses two particles. I
+        will give it in the spin version, which is due to Bohm
+        <a class="cite" href="#ref-3">[3,</a> <a class="cite" href="#ref-4">4]</a> and
+        is what everyone uses now.
+      </p>
+      <p>Prepare two spins in the state</p>
+      <div class="eq" id="eq1">\[
+        \ket{\Phi^+} = \frac{\ket{00} + \ket{11}}{\sqrt{2}}, \tag{1}
+      \]</div>
+      <p>
+        send one to Alice and one to Bob, far apart (<a href="#fig1">Figure 1</a>).
+        If Alice measures her spin along $z$ and finds up, the state collapses to
+        $\ket{00}$, so Bob's spin is now certainly up along $z$. If she instead
+        measures along $x$, the same state can be rewritten as
+        $(\ket{++} + \ket{--})/\sqrt{2}$ with $\ket{\pm} = (\ket{0} \pm \ket{1})/\sqrt2$,
+        so her outcome fixes Bob's $x$-spin with certainty instead.
+      </p>
+      <p>
+        EPR's reasoning then goes like this. Alice is far away from Bob, so nothing
+        she does can disturb his particle. Yet by choosing what to measure, she can
+        predict with certainty either Bob's $z$-spin or his $x$-spin. Their
+        criterion was: if you can predict a quantity with certainty without
+        disturbing the system, that quantity is an "element of reality". So both
+        Bob's $z$-spin and his $x$-spin must be real, definite quantities, fixed
+        before anyone measures. Quantum mechanics has no state in which both are
+        definite. Therefore, EPR concluded, quantum mechanics is incomplete: there
+        must be extra variables, not in the wavefunction, that fix those values in
+        advance.
+      </p>
+
+      <figure class="post-fig" id="fig1">
+        <div class="fig-plate">
+          <img src="figures/bell-quantum-chip/epr_setup.svg" alt="A source in the middle sends particle 1 to Alice on the left and particle 2 to Bob on the right. Each chooses a setting and records a result of plus or minus one." style="max-width: 560px">
+        </div>
+        <figcaption><span class="fig-label">Figure 1.</span> The EPR–Bohm setup.
+          A source emits two particles in the entangled state $\ket{\Phi^+}$. Alice
+          and Bob each choose a measurement direction and record a result of $+1$ or
+          $-1$. The whole of Bell's theorem is about the statistics of the four
+          numbers $(a,b,A,B)$ collected over many runs.</figcaption>
+      </figure>
+
+      <p>
+        I find it useful to state the hidden assumption plainly, because Bell's whole
+        contribution is to test it. The assumption is <em>locality</em>: what happens
+        at Bob's station does not depend on what Alice chooses to do. Einstein called
+        the alternative "spooky action at a distance". Bell's later essay on
+        Bertlmann's socks is the clearest explanation I have read of why the EPR
+        correlations by themselves are not spooky, and why the trouble only starts
+        when you look at several measurement directions at once
+        <a class="cite" href="#ref-5">[5]</a>. Mermin's Physics Today article does
+        the same job with a gadget instead of socks
+        <a class="cite" href="#ref-6">[6]</a>.
+      </p>
+      <p>
+        For thirty years this was treated as a matter of taste. Both sides predicted
+        the same results for the experiment above. Bell's insight in 1964 was that
+        they do <em>not</em> predict the same results once each side has a choice of
+        two settings <a class="cite" href="#ref-7">[7]</a>.
+      </p>
+
+      <!-- ============================================================ -->
+      <h2 id="local">3. The local bound: why $S \le 2$</h2>
+
+      <p>
+        Here is the experiment in the form proposed by Clauser, Horne, Shimony and
+        Holt (CHSH) <a class="cite" href="#ref-8">[8]</a>. In each run, Alice picks
+        one of two settings, $a_0$ or $a_1$, and Bob picks one of two, $b_0$ or $b_1$.
+        Each records an outcome $A = \pm1$ or $B = \pm1$. After many runs we compute
+        the four correlators
+      </p>
+      <div class="eq">\[
+        \begin{aligned}
+        E(a,b) &amp;= \langle A B \rangle \\
+               &amp;= P(A=B \mid a,b) - P(A \neq B \mid a,b),
+        \end{aligned}
+      \]</div>
+      <p>
+        which equal $+1$ when the outcomes always agree, $-1$ when they always
+        disagree, and $0$ when they are unrelated. Then we form the single number
+      </p>
+      <div class="eq" id="eq2">\[
+        S = E(a_0,b_0) + E(a_0,b_1) + E(a_1,b_0) - E(a_1,b_1). \tag{2}
+      \]</div>
+      <p>
+        Now suppose Einstein is right. Then in each run the particles carry some
+        hidden information, call it $\lambda$, fixed at the source. Locality says
+        Alice's outcome is a function of her setting and $\lambda$ only,
+        $A(a,\lambda)$, and Bob's is $B(b,\lambda)$. (If the outcomes were random
+        even given $\lambda$, we could fold that randomness into $\lambda$ itself,
+        so nothing is lost by taking them deterministic.) Fix one $\lambda$ and write
+        $A_0 = A(a_0,\lambda)$, $A_1 = A(a_1,\lambda)$, $B_0$, $B_1$ similarly. Each
+        is $+1$ or $-1$. Consider
+      </p>
+      <div class="eq" id="eq3">\[
+        \begin{aligned}
+        s(\lambda) &amp;= A_0 B_0 + A_0 B_1 + A_1 B_0 - A_1 B_1 \\
+                   &amp;= A_0 (B_0 + B_1) + A_1 (B_0 - B_1).
+        \end{aligned} \tag{3}
+      \]</div>
+      <p>
+        Since $B_0$ and $B_1$ are each $\pm1$, either they are equal, in which case
+        $B_0 - B_1 = 0$ and $B_0 + B_1 = \pm2$, or they are opposite, in which case
+        $B_0 + B_1 = 0$ and $B_0 - B_1 = \pm 2$. Either way exactly one bracket
+        survives and it equals $\pm2$, so $s(\lambda) = \pm 2$ for every $\lambda$.
+        <a href="#fig2">Figure 2</a> shows all sixteen possibilities.
+      </p>
+      <p>
+        The observed $S$ is the average of $s(\lambda)$ over whatever distribution
+        the source produces. An average of numbers that are each $\pm2$ lies between
+        $-2$ and $+2$. That is the CHSH inequality:
+      </p>
+      <div class="eq" id="eq4">\[
+        |S| \le 2 \qquad \text{for every local hidden-variable model.} \tag{4}
+      \]</div>
+      <p>
+        Nothing about quantum mechanics was used. The bound follows from locality and
+        the existence of the four values $A_0, A_1, B_0, B_1$ in each run, which is
+        what "pre-existing elements of reality" means once you write it down.
+      </p>
+
+      <figure class="post-fig" id="fig2">
+        <div class="fig-plate">
+          <img src="figures/bell-quantum-chip/deterministic_strategies.svg" alt="Sixteen dots, each at S equal to plus two or minus two, between dashed lines at the local bound and a dotted line at two root two." loading="lazy">
+        </div>
+        <figcaption><span class="fig-label">Figure 2.</span> The value of $S$ for each
+          of the sixteen ways to pre-assign $A_0, A_1, B_0, B_1 = \pm 1$. Every one
+          gives exactly $+2$ or $-2$, so no mixture of them can exceed 2. Quantum
+          mechanics reaches $2\sqrt{2} \approx 2.83$, the dotted line.</figcaption>
+      </figure>
+
+      <!-- ============================================================ -->
+      <h2 id="quantum">4. The quantum correlation: $E(a,b) = \cos(a-b)$</h2>
+
+      <p>
+        Now the quantum side. Let Alice and Bob each measure spin along a direction in
+        the $x$–$z$ plane at angle $a$ or $b$ from the $z$ axis. The corresponding
+        observable is
+      </p>
+      <div class="eq">\[
+        \begin{gathered}
+        \hat{A}(a) = \cos a \, Z + \sin a \, X, \\[4pt]
+        Z = \begin{pmatrix} 1 &amp; 0 \\ 0 &amp; -1 \end{pmatrix}, \qquad
+        X = \begin{pmatrix} 0 &amp; 1 \\ 1 &amp; 0 \end{pmatrix},
+        \end{gathered}
+      \]</div>
+      <p>
+        whose eigenvalues are $\pm 1$, matching the outcome labels. The correlator is
+        the expectation value of the product,
+      </p>
+      <div class="eq">\[
+        \begin{aligned}
+        E(a,b) &amp;= \bra{\Phi^+} \hat{A}(a) \otimes \hat{B}(b) \ket{\Phi^+} \\
+               &amp;= \cos a \cos b \, \langle Z\!\otimes\! Z \rangle
+                + \sin a \sin b \, \langle X\!\otimes\! X \rangle \\
+               &amp;\quad + \cos a \sin b \, \langle Z\!\otimes\! X \rangle
+                + \sin a \cos b \, \langle X\!\otimes\! Z \rangle .
+        \end{aligned}
+      \]</div>
+      <p>The four expectation values are quick to compute in the state <a href="#eq1">(1)</a>:</p>
+      <div class="eq">\[
+        \begin{aligned}
+        Z \otimes Z \ket{\Phi^+} &amp;= \tfrac{1}{\sqrt2}\big(\ket{00} + (-1)(-1)\ket{11}\big) = \ket{\Phi^+} \\
+          &amp;\Rightarrow\ \langle Z\!\otimes\! Z\rangle = 1, \\[6pt]
+        X \otimes X \ket{\Phi^+} &amp;= \tfrac{1}{\sqrt2}\big(\ket{11} + \ket{00}\big) = \ket{\Phi^+} \\
+          &amp;\Rightarrow\ \langle X\!\otimes\! X\rangle = 1, \\[6pt]
+        Z \otimes X \ket{\Phi^+} &amp;= \tfrac{1}{\sqrt2}\big(\ket{01} - \ket{10}\big) \\
+          &amp;\Rightarrow\ \langle Z\!\otimes\! X\rangle = 0,
+        \end{aligned}
+      \]</div>
+      <p>
+        and $\langle X \otimes Z \rangle = 0$ by the same calculation. The state
+        $(\ket{01} - \ket{10})/\sqrt2$ is orthogonal to $\ket{\Phi^+}$, which is why
+        the last two vanish. Putting these in,
+      </p>
+      <div class="eq" id="eq5">\[
+        E(a,b) = \cos a \cos b + \sin a \sin b = \cos(a - b). \tag{5}
+      \]</div>
+      <p>
+        This is the whole content of entanglement for our purpose: the correlation
+        depends only on the angle between the two measurement directions, and it can
+        be perfect ($\pm1$) for any common direction, not just $z$.
+      </p>
+
+      <!-- ============================================================ -->
+      <h2 id="tsirelson">5. Reaching $S = 2\sqrt{2}$</h2>
+
+      <p>Choose the settings shown in <a href="#fig3">Figure 3a</a>:</p>
+      <div class="eq">\[
+        a_0 = 0, \qquad a_1 = \tfrac{\pi}{2}, \qquad b_0 = \tfrac{\pi}{4}, \qquad b_1 = -\tfrac{\pi}{4}.
+      \]</div>
+      <p>Then by <a href="#eq5">(5)</a>,</p>
+      <div class="eq">\[
+        \begin{aligned}
+        E(a_0,b_0) &amp;= \cos\tfrac{\pi}{4} = \tfrac{1}{\sqrt2}, &amp;
+        E(a_0,b_1) &amp;= \cos\tfrac{\pi}{4} = \tfrac{1}{\sqrt2}, \\
+        E(a_1,b_0) &amp;= \cos\tfrac{\pi}{4} = \tfrac{1}{\sqrt2}, &amp;
+        E(a_1,b_1) &amp;= \cos\tfrac{3\pi}{4} = -\tfrac{1}{\sqrt2},
+        \end{aligned}
+      \]</div>
+      <p>and <a href="#eq2">(2)</a> gives</p>
+      <div class="eq">\[
+        S = \tfrac{1}{\sqrt2} + \tfrac{1}{\sqrt2} + \tfrac{1}{\sqrt2} + \tfrac{1}{\sqrt2} = 2\sqrt{2} \approx 2.83 &gt; 2.
+      \]</div>
+      <p>
+        The minus sign in $S$ is placed exactly on the one pair of directions that
+        are $135^\circ$ apart, so all four terms add. Tsirelson proved that
+        $2\sqrt2$ is the largest value any quantum state and any measurements can
+        give <a class="cite" href="#ref-9">[9]</a>. <a href="#fig3">Figure 3b</a>
+        shows how $S$ depends on Bob's angle when Alice keeps $0$ and $\pi/2$; the
+        violation is not a knife edge but a broad window around $\pi/4$, which
+        matters for a noisy experiment.
+      </p>
+
+      <figure class="post-fig" id="fig3">
+        <div class="fig-plate fig-row">
+          <div class="fig-panel" style="flex: 0 1 36%">
+            <img src="figures/bell-quantum-chip/settings_circle.svg" alt="A unit circle with Alice's two directions at 0 and 90 degrees and Bob's two directions at plus and minus 45 degrees." loading="lazy">
+            <span class="fig-sub">(a) The four measurement directions.</span>
+          </div>
+          <div class="fig-panel" style="flex: 1 1 60%">
+            <img src="figures/bell-quantum-chip/S_vs_angle.svg" alt="S as a function of Bob's angle, rising above the local bound of 2 between 0 and pi over 2 and peaking at 2 root 2 at pi over 4." loading="lazy">
+            <span class="fig-sub">(b) $S$ as a function of Bob's angle.</span>
+          </div>
+        </div>
+        <figcaption><span class="fig-label">Figure 3.</span> (a) Alice's settings
+          (blue) are $90^\circ$ apart; Bob's (red) sit halfway between them. (b) With
+          $b_0 = \theta$ and $b_1 = -\theta$, quantum mechanics gives
+          $S(\theta) = 2\cos\theta + 2\sin\theta$, which exceeds the local bound for
+          $0 &lt; \theta &lt; \pi/2$ and peaks at $\theta = \pi/4$.</figcaption>
+      </figure>
+
+      <p>
+        So the two pictures disagree by a finite, measurable amount: no local model
+        can exceed 2, quantum mechanics predicts 2.83. Freedman and Clauser measured a
+        violation with photons from a calcium cascade in 1972
+        <a class="cite" href="#ref-10">[10]</a>, Aspect and co-workers did it with
+        settings switched while the photons were in flight in 1982
+        <a class="cite" href="#ref-11">[11]</a>, and Zeilinger's group enforced strict
+        spacelike separation in 1998 <a class="cite" href="#ref-12">[12]</a>. The 2022
+        Nobel Prize citation reads "for experiments with entangled photons,
+        establishing the violation of Bell inequalities and pioneering quantum
+        information science" <a class="cite" href="#ref-1">[1]</a>.
+      </p>
+
+      <!-- ============================================================ -->
+      <h2 id="loopholes">6. Loopholes, and why a chip cannot close them</h2>
+
+      <p>
+        A violation of <a href="#eq4">(4)</a> only rules out local hidden variables if
+        the experiment actually satisfies the assumptions that went into the
+        derivation. Two of them can fail in practice, and the history of Bell tests is
+        largely the history of closing them.
+      </p>
+      <p>
+        <strong>The locality loophole.</strong> The derivation assumed Bob's outcome
+        cannot depend on Alice's setting. If Alice's choice is made early enough, or
+        the stations are close enough, a signal travelling at the speed of light could
+        carry her setting to Bob's particle before it is measured, and a local model
+        with that signal could imitate quantum correlations. To rule this out, each
+        setting must be chosen, and each outcome recorded, outside the light cone of
+        the other station's choice (<a href="#fig4">Figure 4</a>). This requires
+        distance and speed: Aspect's 1982 experiment switched settings during the
+        photons' flight <a class="cite" href="#ref-11">[11]</a>; Weihs and co-workers
+        used 400&nbsp;m of separation and fast random switching
+        <a class="cite" href="#ref-12">[12]</a>.
+      </p>
+
+      <figure class="post-fig" id="fig4">
+        <div class="fig-plate">
+          <img src="figures/bell-quantum-chip/light_cones.svg" alt="A space-time diagram. Alice on the left and Bob on the right each pick a setting and record a result before light from the other side's choice reaches them." loading="lazy" style="max-width: 520px">
+        </div>
+        <figcaption><span class="fig-label">Figure 4.</span> Closing the locality
+          loophole. The shaded triangles are the regions that light from each choice
+          can reach. Bob's outcome is recorded before light from Alice's choice
+          arrives, and vice versa, so no signal at or below light speed can correlate
+          the setting on one side with the outcome on the other.</figcaption>
+      </figure>
+
+      <p>
+        <strong>The detection loophole.</strong> Real detectors miss particles. If
+        only a fraction of pairs is detected, and we compute $S$ from the detected
+        ones, we are assuming that the detected pairs are a fair sample of all pairs.
+        A local model in which the hidden variable also decides <em>whether</em> a
+        particle is detected can produce an apparent violation from the surviving
+        sample <a class="cite" href="#ref-13">[13]</a>. The clean fix is to count
+        every emitted pair and assign a definite outcome to "no click"; with that rule
+        a violation needs the detection efficiency above about 83% for the CHSH
+        inequality with a maximally entangled state
+        <a class="cite" href="#ref-13">[13]</a> (<a href="#fig5">Figure 5</a>).
+        Photon experiments only reached this in 2015
+        <a class="cite" href="#ref-14">[14,</a> <a class="cite" href="#ref-15">15]</a>,
+        and the same year a test with electron spins in diamond 1.3&nbsp;km apart
+        closed both loopholes at once <a class="cite" href="#ref-16">[16]</a>.
+      </p>
+
+      <figure class="post-fig" id="fig5">
+        <div class="fig-plate">
+          <img src="figures/bell-quantum-chip/detection_loophole.svg" alt="Observed S against detection efficiency. The fair-sampling line stays at 2 root 2; the curve that counts every pair falls below 2 for efficiency below about 0.83." loading="lazy">
+        </div>
+        <figcaption><span class="fig-label">Figure 5.</span> A simple model of the
+          detection loophole. If undetected particles are dropped and $S$ is computed
+          from the rest, the ideal value $2\sqrt2$ appears at any efficiency (grey),
+          but this assumes fair sampling. If every run must be counted and a missing
+          click is scored as $+1$, the observed $S$ falls as
+          $\eta^2\,2\sqrt2 + 2(1-\eta)^2$ and drops below 2 for $\eta$ below roughly
+          $0.83$ (blue).</figcaption>
+      </figure>
+
+      <p>
+        <strong>Why a single quantum processor cannot do this.</strong> On Tuna-17 the
+        two qubits I use are neighbours, a few millimetres apart. The gates that set
+        the measurement direction take tens of nanoseconds and readout takes on the
+        order of a microsecond, while light covers 30&nbsp;cm every nanosecond.
+        Everything on one side is deep inside the light cone of everything on the
+        other. There is no distance to exploit and no fast random switch: the
+        "choice" of setting is a rotation gate compiled into the circuit before it
+        runs. So the locality loophole is wide open, not slightly open. As for
+        detection, every shot on a superconducting processor returns a $0$ or a $1$,
+        so there is no missing-click problem in the usual sense, but readout errors do
+        flip outcomes, and one has to be honest that error mitigation is a form of
+        post-processing.
+      </p>
+      <p>
+        This does not make the exercise pointless. It changes what it tests. A CHSH
+        violation on a chip does not test local realism; it tests whether the device
+        can create and read out entanglement well enough to reproduce the quantum
+        prediction. That is a statement about the hardware, and a useful one. It is
+        also worth knowing that superconducting qubits <em>can</em> close the locality
+        loophole when they are put in separate cryostats connected by a 30&nbsp;m cold
+        microwave link, which the ETH Zurich group demonstrated in 2023 with more than
+        a million trials <a class="cite" href="#ref-17">[17]</a>. The limitation is the
+        single chip, not the technology.
+      </p>
+
+      <!-- ============================================================ -->
+      <h2 id="experiment">7. My experiment: CHSH on Tuna-17</h2>
+
+      <h3>7.1 Circuit</h3>
+      <p>
+        I used Qiskit <a class="cite" href="#ref-18">[18]</a> and Quantum Inspire, the
+        cloud platform of QuTech in Delft, which gives free access to Tuna-17, a
+        17-qubit superconducting processor with tunable couplers
+        <a class="cite" href="#ref-19">[19,</a> <a class="cite" href="#ref-20">20]</a>.
+        The circuit is in <a href="#fig6">Figure 6</a>. A Hadamard gate on the first
+        qubit followed by a controlled-NOT prepares $\ket{\Phi^+}$. Then each qubit is
+        rotated about the $y$ axis by minus its measurement angle, $R_y(-a)$ on
+        Alice's qubit and $R_y(-b)$ on Bob's, and both are measured in the
+        computational basis. The rotation turns the direction $\hat{A}(a)$ into $Z$,
+        so a $Z$ measurement after it is the same as measuring $\hat{A}(a)$ before it.
+        I checked this numerically against equation <a href="#eq5">(5)</a> for random
+        angles before running anything.
+      </p>
+
+      <figure class="post-fig" id="fig6">
+        <div class="fig-plate">
+          <img src="figures/bell-quantum-chip/chsh_circuit.svg" alt="Two-qubit circuit: Hadamard on q0, controlled-NOT from q0 to q1, then R_y(-a) on q0 and R_y(-b) on q1, then measurement of both." loading="lazy" style="max-width: 380px">
+        </div>
+        <figcaption><span class="fig-label">Figure 6.</span> The CHSH circuit for one
+          pair of settings. $H$ and the controlled-NOT prepare the Bell state
+          $\ket{\Phi^+}$; the two $R_y$ rotations turn the measurement directions $a$
+          and $b$ onto the $z$ axis; the meters are $Z$ measurements giving
+          $A, B = \pm1$. One circuit is run per pair of settings, 20,000 times
+          each.</figcaption>
+      </figure>
+
+      <p>
+        Four circuits, one per setting pair, give the four correlators in
+        <a href="#eq2">(2)</a>. I also ran a sweep with Alice fixed at $a = 0$ and
+        Bob's angle stepped from $0$ to $2\pi$, to see the cosine of equation
+        <a href="#eq5">(5)</a> directly rather than only at four points. Each of the
+        29 circuits was run for 20,000 shots. The transpiler placed the pair on
+        physical qubits 0 and 1, which are directly coupled, so the circuit needs a
+        single two-qubit gate.
+      </p>
+      <p>
+        Two practical notes, because they cost me a day. The platform accepts at most
+        five circuits per batch and five batches in the queue at once, so the 29
+        circuits went in six batches submitted as slots freed. More importantly, the
+        jobs inside a batch are created concurrently, so their identifiers are
+        <em>not</em> in the order the circuits were submitted. I only noticed because
+        a deliberate test circuit came back with the wrong number of bits. Every
+        circuit is stored on the platform as source code, so I rebuilt the assignment
+        by matching each returned job against the code that produced it, and I now
+        verify that mapping automatically before reading any result. Three of the
+        sweep angles coincide with CHSH settings, giving three pairs of physically
+        identical circuits run in different batches; they agree within $0.8$ standard
+        deviations, which is the evidence that the repaired bookkeeping is right and
+        that the device was stable across the run.
+      </p>
+      <p>
+        The correlator from counts is $E = (N_{00} + N_{11} - N_{01} - N_{10})/N$, and
+        its statistical error is $\sqrt{(1 - E^2)/N}$, which is the standard deviation
+        of a $\pm1$ variable averaged $N$ times. The error on $S$ adds the four in
+        quadrature.
+      </p>
+
+      <h3>7.2 Results</h3>
+      <p>
+        <a href="#fig7">Figure 7a</a> shows the sweep. The measured correlation follows
+        $\cos b$ in shape, but with a clearly reduced amplitude: the largest value is
+        $0.77$ rather than $1$. <a href="#tab1">Table 1</a> and
+        <a href="#fig7">Figure 7b</a> give the four CHSH correlators. The result is
+      </p>
+      <div class="eq">\[
+        S = 2.085 \pm 0.012,
+      \]</div>
+      <p>
+        which is above the local bound by 7.1 standard deviations and $26\%$ below the
+        quantum maximum. The one mild outlier among the four correlators is
+        $E(a_0,b_1)$, smaller in magnitude than its partners by about twice the
+        combined statistical error.
+      </p>
+      <p>
+        Most of that shortfall is captured by one number. If the ideal state is mixed
+        with unpolarised noise, every correlator is scaled by a common visibility $V$,
+        so $E(a,b) = V\cos(a-b)$ and $S = 2\sqrt2\,V$. My $S$ gives
+        $V = 2.085/2\sqrt2 = 0.74$, and fitting the sweep by least squares gives a
+        compatible $V = 0.76$.
+      </p>
+      <p>
+        The two values are close but not equal, and with 20,000 shots per point the
+        statistical error on each is under $0.005$, so the difference is real. It is
+        worth saying what fails rather than rounding it away. Fitting the sweep to a
+        pure scaled cosine gives a reduced chi-squared of about $120$, so that model is
+        decisively rejected. Allowing two more parameters, a phase offset and a
+        constant shift, brings it to about $23$, with an offset angle of
+        $4.1 \pm 0.1$ degrees and a shift of $-0.05$. In other words the measurement
+        axes are slightly rotated from where I asked them to be, and the correlator is
+        pulled a little negative at every angle. Bob's qubit also shows a readout
+        bias: its single-party average is about $-0.12$ across all four CHSH settings,
+        where the ideal value is zero. None of this threatens the violation, which
+        needs only that $S$ exceed 2, but it does mean the device is not simply an
+        ideal Bell pair behind a depolarising channel. Calibration error and readout
+        asymmetry are part of the picture, and a more careful experiment would
+        characterise them first.
+      </p>
+
+      <figure class="post-fig" id="fig7">
+        <div class="fig-plate fig-row">
+          <div class="fig-panel" style="flex: 1 1 48%">
+            <img src="figures/bell-quantum-chip/chsh_correlation_hw.svg" alt="Measured correlation against Bob's angle, following a cosine with reduced amplitude." loading="lazy">
+            <span class="fig-sub">(a) Correlation sweep, Alice at $a=0$.</span>
+          </div>
+          <div class="fig-panel" style="flex: 1 1 48%">
+            <img src="figures/bell-quantum-chip/chsh_correlators_hw.svg" alt="Bar chart of the four measured CHSH correlators next to the ideal values of plus or minus one over root two." loading="lazy">
+            <span class="fig-sub">(b) The four CHSH correlators.</span>
+          </div>
+        </div>
+        <figcaption><span class="fig-label">Figure 7.</span> Results on Tuna-17.
+          (a) $E(0,b)$ versus Bob's angle, with the ideal prediction $\cos b$ (grey) and
+          the same curve scaled by the least-squares visibility $V = 0.76$ (red dashed).
+          Error bars are statistical and are smaller than the symbols. The small
+          systematic departures from the dashed curve are discussed in the text.
+          (b) The four correlators entering $S$, next to the ideal values
+          $\pm1/\sqrt2$.</figcaption>
+      </figure>
+
+      <div class="table-wrap" id="tab1">
+        <p class="table-caption"><span class="fig-label">Table 1.</span> CHSH
+          correlators and $S$ measured on Tuna-17 (20,000 shots per setting pair).
+          Errors are statistical. The last column is the ideal value scaled by the
+          fitted visibility $V = 0.74$.</p>
+        <table class="post-table">
+          <thead>
+            <tr><th>Setting pair</th><th>Ideal</th><th>Measured</th><th>Error</th><th>$V \times$ ideal</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>$E(a_0,b_0)$</td><td>$+0.707$</td><td>$+0.539$</td><td>$0.006$</td><td>$+0.52$</td></tr>
+            <tr><td>$E(a_0,b_1)$</td><td>$+0.707$</td><td>$+0.447$</td><td>$0.006$</td><td>$+0.52$</td></tr>
+            <tr><td>$E(a_1,b_0)$</td><td>$+0.707$</td><td>$+0.571$</td><td>$0.006$</td><td>$+0.52$</td></tr>
+            <tr><td>$E(a_1,b_1)$</td><td>$-0.707$</td><td>$-0.529$</td><td>$0.006$</td><td>$-0.52$</td></tr>
+            <tr class="rule-above"><td>$S$</td><td>$2.828$</td><td>$2.085$</td><td>$0.012$</td><td>$2.09$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>7.3 Checking that the data do not signal</h3>
+      <p>
+        There is a check I did not know to do until I read the recent work of Bednorz
+        and collaborators. Locality implies something weaker than the CHSH bound that
+        can be tested directly: Alice's own outcome statistics must not change when Bob
+        changes his setting. In symbols, $\langle A \rangle$ measured with $b_0$ must
+        equal $\langle A \rangle$ measured with $b_1$, up to statistical noise, and the
+        same for Bob. This is the no-signalling condition. Quantum mechanics obeys it
+        exactly. A real chip need not, because operating on one qubit can disturb a
+        neighbour, an effect called crosstalk. Rybotycki and co-workers ran CHSH tests
+        on IBM devices with thirty million shots per setting and found small but
+        statistically significant signalling on several qubit pairs
+        <a class="cite" href="#ref-21">[21]</a>; a follow-up on four generations of IBM
+        processors found it strongest on the older devices and absent, within error, on
+        the newest <a class="cite" href="#ref-22">[22]</a>.
+      </p>
+      <p>
+        In my data the four signalling differences are all at most $0.016$ in
+        magnitude, with a statistical uncertainty of $0.010$ on each, so the largest is
+        $1.6$ standard deviations and all are consistent with zero. With 20,000 shots I
+        can only bound signalling at the percent level, which is far coarser than the
+        effect Rybotycki and co-workers resolved with thirty million shots per setting.
+        So this is a null result at low sensitivity, not evidence that Tuna-17 is free
+        of crosstalk. I record it because a Bell violation accompanied by signalling
+        would not mean what it appears to mean, and because the check costs nothing
+        once the data are in hand.
+      </p>
+
+      <h3>7.4 What the number means</h3>
+      <p>
+        My $S$ is above 2 by seven standard deviations, and a quarter below what
+        quantum mechanics allows. Given <a href="#loopholes">Section 6</a>, I read this
+        as a statement about the device rather than about nature: Tuna-17 prepares a
+        two-qubit entangled state and measures it in rotated bases with a combined
+        visibility of 0.74. That is comfortably enough to exclude every local model of
+        the correlations it produces, and far from the fidelity a stricter test would
+        need. It is not a test of local realism, and I would not describe it as one to
+        a student.
+      </p>
+      <p>
+        What the exercise gave me is something different. The derivation in
+        <a href="#local">Sections 3</a> to <a href="#tsirelson">5</a> became a script I
+        could run, and the gap between $2.83$ and $2.085$ turned into a concrete
+        question about one piece of hardware. A single number, the visibility, accounts
+        for that whole gap, and I could check it two independent ways in my own data.
+        That is the part I did not expect to enjoy.
+      </p>
+
+      <!-- ============================================================ -->
+      <h2 id="network">8. Beyond one source: the triangle network</h2>
+
+      <p>
+        The question I wanted to pursue is what happens when there is more than one
+        source. In the experiment above, one source feeds both Alice and Bob. In a
+        network, several <em>independent</em> sources each feed a pair of parties, and
+        a party in the middle may measure its two particles jointly
+        (<a href="#fig8">Figure 8</a>). This changes the mathematics in a way I did not
+        expect. The set of correlations a local model can produce is no longer convex:
+        mixing two allowed correlations with a coin flip is not allowed, because the
+        coin would be a shared variable correlating sources that are supposed to be
+        independent. The usual machinery of Bell inequalities, which relies on that
+        convexity, largely stops working. The review by Tavakoli and co-workers is the
+        map of this territory <a class="cite" href="#ref-23">[23]</a>.
+      </p>
+
+      <figure class="post-fig" id="fig8">
+        <div class="fig-plate">
+          <img src="figures/bell-quantum-chip/networks.svg" alt="Left: the bilocal network, a chain A, S1, B, S2, C. Right: the triangle, three parties A, B, C with sources alpha, beta, gamma on the three sides." loading="lazy">
+        </div>
+        <figcaption><span class="fig-label">Figure 8.</span> Two network scenarios.
+          Left: the bilocal network. Right: the triangle. In the triangle nobody chooses
+          a setting, and the outcome statistics alone can be impossible for independent
+          classical sources to produce.</figcaption>
+      </figure>
+
+      <p>
+        The triangle is the case that caught me. Three parties, three independent
+        sources, and each party makes a single fixed measurement on the two qubits it
+        receives; there are no settings to choose at all. When that measurement is the
+        "Elegant Joint Measurement" of Gisin, a symmetric four-outcome measurement, the
+        outcome pattern was conjectured in 2017 to have no classical explanation. The
+        conjecture was only proved in October 2025, by a computer-assisted method called
+        inflation <a class="cite" href="#ref-24">[24]</a>. But the proof holds for the
+        ideal, noise-free pattern. No one yet has a proof that survives realistic noise,
+        which is exactly what stopped the only superconducting attempt: Bäumer, Gisin
+        and Tavakoli ran this triangle on IBM hardware in 2021 and could not decide
+        whether their noisy data were nonlocal <a class="cite" href="#ref-25">[25]</a>.
+        Since then a conjectured inequality tailored to the triangle has appeared
+        <a class="cite" href="#ref-26">[26]</a>, a six-photon experiment has violated it
+        <a class="cite" href="#ref-27">[27]</a>, and a bilocal test on the current
+        generation of IBM chips has succeeded <a class="cite" href="#ref-28">[28]</a>.
+        The triangle has not been retried on a chip.
+      </p>
+
+      <h3>8.1 What the test actually asks for</h3>
+      <p>
+        The conjectured inequality of Bäumer and co-workers
+        <a class="cite" href="#ref-26">[26]</a> is built from the probability $s_{111}$
+        that all three parties report the same outcome, minus a penalty $\Delta_1$ for
+        how unevenly the probabilities are spread within each class of outcomes. The
+        test is
+      </p>
+      <div class="eq">\[
+        I_1 = s_{111} - 0.475\,\Delta_1 &gt; 0.289 .
+      \]</div>
+      <p>
+        The ideal quantum pattern gives $s_{111} = 25/64 = 0.391$ with $\Delta_1 = 0$.
+        A device producing nothing but noise gives $s_{111} = 4/64 = 0.063$. So the
+        whole experiment lives in the gap between $0.063$ and $0.391$, and the threshold
+        sits close to the top of it.
+      </p>
+      <p>
+        Three details matter for anyone trying this. The circuit is three entangled
+        pairs and three joint measurements, and it cannot be made cheaper: I checked
+        that the Elegant Joint Measurement provably needs two entangling gates, so nine
+        is the floor for the whole circuit. There are no measurement settings to choose,
+        so the entire experiment is a single circuit run many times. And because the
+        classical set is not convex, the data may not be symmetrised by averaging over
+        relabellings, which is the one post-processing step that would otherwise make
+        $\Delta_1$ small for free.
+      </p>
+
+      <!-- ============================================================ -->
+      <h2 id="triangle">9. Trying it: two machines and two faults</h2>
+
+      <p>
+        I ran the triangle on Tuna-17 and on Cepheus-1-108Q, a 108-qubit Rigetti
+        processor reached through the Open Quantum platform
+        <a class="cite" href="#ref-29">[29]</a>. Neither passed. Getting to a result that
+        was even wrong for interesting reasons took longer than everything else in this
+        article, because on both machines some gates were not doing what the
+        instruction said.
+      </p>
+
+      <h3>9.1 A gate that ignores its own setting</h3>
+      <p>
+        The joint measurement needs a controlled-phase gate turned by a quarter turn. On
+        Tuna-17 the assembled circuit returned an almost perfectly flat distribution,
+        while its individual pieces looked healthy: three entangled pairs prepared
+        together gave correlations of $-0.84$ to $-0.89$ against an ideal $-1$, and a
+        single pair gave $0.91$.
+      </p>
+      <p>
+        The test that settled it is small. Feed the joint measurement a definite input
+        and two of its four outcomes become impossible. <a href="#fig9">Figure 9</a>
+        shows what happened. Built with the controlled-phase gate, the forbidden outcomes
+        came back at $0.24$ each, which is exactly the flat distribution predicted if
+        that gate were secretly a plain controlled-$Z$. Built instead out of
+        controlled-NOT gates, the same measurement gave $0.02$ and $0.02$ for the
+        forbidden outcomes and $0.49$ and $0.47$ for the allowed ones, which is correct.
+        As a final check, a controlled-phase gate turned by a half turn, the one angle at
+        which it coincides with controlled-$Z$, agreed with controlled-$Z$ exactly. The
+        gate accepts an angle and ignores it.
+      </p>
+
+      <h3>9.2 Rotations that never happen</h3>
+      <p>
+        On Cepheus the failure was louder. A single entangled pair worked well, agreeing
+        $93\%$ of the time, but the triangle returned nearly deterministic bits, with
+        five of the six qubits frozen. Noise does not do that; noise pushes everything
+        toward one half.
+      </p>
+      <p>
+        I asked six qubits to rotate through six different angles and measured each one.
+        The requested probabilities ran from $0.07$ to $0.85$. Every measured value came
+        back near $0.01$ (<a href="#fig9">Figure 9</a>, right). The qubits had not moved
+        at all. A follow-up test showed the same for every adjustable rotation, while the
+        fixed gates, the ones with no angle to supply, all behaved correctly to within a
+        per cent.
+      </p>
+      <p>
+        So I rebuilt the whole experiment from fixed gates only, expressing the
+        controlled-phase gate through $T$ gates. This is exact rather than approximate,
+        and it costs twelve entangling gates instead of nine.
+      </p>
+
+      <figure class="post-fig" id="fig9">
+        <div class="fig-plate">
+          <img src="figures/bell-quantum-chip/gate_bugs.svg" alt="Left: on Tuna-17 the measured outcome probabilities match a gate acting as controlled-Z, not the correct gate. Right: on Cepheus, six requested rotation probabilities rise from 0.07 to 0.85 while every measured value stays near zero." loading="lazy">
+        </div>
+        <figcaption><span class="fig-label">Figure 9.</span> Two faults, each from a
+          minimal test. Left: on Tuna-17, a measurement whose two forbidden outcomes should
+          have probability zero returns them at $0.24$, matching what a device would give
+          if it replaced the adjustable controlled-phase gate with a fixed
+          controlled-$Z$. Right: on Cepheus, six qubits asked to rotate by six different
+          angles all stay where they started.</figcaption>
+      </figure>
+
+      <h3>9.3 The result</h3>
+      <p>
+        With fixed gates only, the circuit finally ran as written: all six qubits came
+        back close to even, as they should. <a href="#fig10">Figure 10</a> and
+        <a href="#tab2">Table 2</a> give the outcome, from 20,000 runs with readout
+        errors measured on the same qubits and corrected.
+      </p>
+      <p>
+        The quantum structure is plainly there. The measured $s_{111} = 0.225$ sits far
+        above the $0.063$ that pure noise would give, and the three outcome classes are
+        ordered as the theory says. It is also, as far as I can tell, better than the
+        $0.281$ reported for the only previous attempt on superconducting hardware
+        <a class="cite" href="#ref-25">[25,</a> <a class="cite" href="#ref-27">27]</a>.
+        On Tuna-17 the same circuit gave only $0.042$, below the noise floor.
+      </p>
+      <p>
+        And it fails the test, badly. The penalty term is $\Delta_1 = 0.40$ where the
+        ideal is zero, which leaves
+      </p>
+      <div class="eq">\[
+        I_1 = 0.031 \pm 0.005 \qquad \text{against a threshold of } 0.289 .
+      \]</div>
+
+      <div class="table-wrap" id="tab2">
+        <p class="table-caption"><span class="fig-label">Table 2.</span> The triangle
+          test. The ideal pattern and the pure-noise floor are exact; the two measured
+          rows are readout-corrected. $I_1$ must exceed $0.289$ to pass.</p>
+        <table class="post-table">
+          <thead>
+            <tr><th></th><th>$s_{111}$</th><th>$s_{112}$</th><th>$s_{123}$</th><th>$I_1$</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>ideal quantum</td><td>$0.391$</td><td>$0.141$</td><td>$0.469$</td><td>$0.391$</td></tr>
+            <tr><td>Cepheus-1-108Q</td><td>$0.225$</td><td>$0.423$</td><td>$0.352$</td><td>$0.031$</td></tr>
+            <tr><td>Tuna-17</td><td>$0.042$</td><td>$0.667$</td><td>$0.290$</td><td>$-0.203$</td></tr>
+            <tr><td>pure noise</td><td>$0.063$</td><td>$0.563$</td><td>$0.375$</td><td>$0.063$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <figure class="post-fig" id="fig10">
+        <div class="fig-plate">
+          <img src="figures/bell-quantum-chip/triangle_results.svg" alt="Left: bar chart of the three outcome-class probabilities for the ideal pattern, Cepheus and pure noise. Right: the test statistic I1 for ideal, Cepheus and Tuna-17 against the threshold of 0.289." loading="lazy">
+        </div>
+        <figcaption><span class="fig-label">Figure 10.</span> Triangle results. Left:
+          the probabilities of the three outcome classes, measured on Cepheus against the
+          ideal pattern and the pure-noise floor. The ordering is right and the signal is
+          well clear of noise. Right: the test statistic for each machine against the
+          threshold it must clear. Error bars are statistical.</figcaption>
+      </figure>
+
+      <h3>9.4 Why it fails, as far as I can tell</h3>
+      <p>
+        The failure is not a shortage of signal. It is the penalty term, which should be
+        about $0.015$ at this sample size and came out at $0.40$, more than twenty times
+        larger.
+      </p>
+      <p>
+        A large penalty means the probabilities are uneven <em>within</em> each class of
+        outcomes. My first guess was that the qubits simply differ from one another,
+        which they visibly do: the readout errors I measured across the six ranged from
+        half a per cent to seven per cent. So I put those measured, unequal error rates
+        into a simulation of the same circuit. The penalty stayed at $0.016$. Uneven
+        qubits do not explain it.
+      </p>
+      <p>
+        What is left is coherent error: a systematic misalignment that tilts the
+        distribution in a structured way rather than blurring it. Ordinary noise models,
+        which assume errors are random, cannot produce it, and that is why every forecast
+        I made from such a model was too optimistic. I have not characterised it further,
+        and I am not going to pretend otherwise.
+      </p>
+      <p>
+        If that reading is right, it says something useful about the inequality itself.
+        Its penalty term is far more sensitive to calibration error than to noise, and
+        the papers proposing it discuss noise. A device can be good enough to show the
+        quantum signal clearly, as Cepheus was, and still fail by a wide margin on
+        symmetry alone. That is a concrete obstacle for anyone planning such an
+        experiment, and it argues for hardware with error-suppression techniques that
+        convert coherent errors into random ones.
+      </p>
+
+      <!-- ============================================================ -->
+      <h2 id="learned">10. What I learned</h2>
+
+      <p>Four things stayed with me.</p>
+      <p>
+        First, the local bound is a theorem about four numbers that are each $\pm1$.
+        Once written as <a href="#eq3">(3)</a> it is two lines, and the depth is entirely
+        in the assumption that all four exist at once.
+      </p>
+      <p>
+        Second, the quantum calculation is equally short, and the reason it beats the
+        bound is the sign structure of $\cos(a-b)$: three directions $45^\circ$ apart and
+        one $135^\circ$ apart, with the minus sign on the last.
+      </p>
+      <p>
+        Third, on a chip the interesting statement is not that local realism is false but
+        that this device makes and reads entanglement this well, and here is a check that
+        it does not leak information between its qubits.
+      </p>
+      <p>
+        Fourth, and this one I did not expect to be the main lesson: a number coming out
+        of a quantum computer is a claim about a long chain of translation, and the chain
+        can be broken quietly. Twice I had results that looked like physics and were
+        arithmetic, and twice the thing that caught it was a test with a prediction sharp
+        enough to fail: a probability that should be exactly zero, a qubit that should be
+        exactly half. Averages would not have caught either. I now build that kind of
+        test before trusting anything.
+      </p>
+      <p>
+        What I still want is the triangle. The pieces are ready and portable, and what
+        is missing is hardware whose gates I can trust and whose coherent errors can be
+        suppressed rather than merely averaged over.
+      </p>
+
+      <h2 id="acknowledgements">Acknowledgements</h2>
+      <p>
+        I am grateful to QuTech, TU Delft and TNO for making Tuna-17 freely available
+        through Quantum Inspire, and to the four Dutch companies that built it with them.
+        The Cepheus measurements were run on the public plan of the Open Quantum platform
+        <a class="cite" href="#ref-29">[29]</a>, whose terms ask that work using it say
+        so. The views expressed here are my own. All code, the raw measurement counts and
+        the job identifiers behind every number in this article are available on
+        request, and I intend to report both gate faults to the platforms concerned.
+      </p>
+
+      <!-- ============================================================ -->
+      <h2 id="references">References</h2>
+      <ol class="references">
+        <li id="ref-1">The Royal Swedish Academy of Sciences, <em>The Nobel Prize in Physics 2022</em>, press release (2022). <a href="https://www.nobelprize.org/prizes/physics/2022/press-release/">nobelprize.org</a></li>
+        <li id="ref-2">A. Einstein, B. Podolsky and N. Rosen, "Can quantum-mechanical description of physical reality be considered complete?", <em>Phys. Rev.</em> 47, 777 (1935). <a href="https://doi.org/10.1103/PhysRev.47.777">doi</a></li>
+        <li id="ref-3">D. Bohm, <em>Quantum Theory</em> (Prentice-Hall, Englewood Cliffs, NJ, 1951).</li>
+        <li id="ref-4">D. Bohm and Y. Aharonov, "Discussion of experimental proof for the paradox of Einstein, Rosen, and Podolsky", <em>Phys. Rev.</em> 108, 1070 (1957). <a href="https://doi.org/10.1103/PhysRev.108.1070">doi</a></li>
+        <li id="ref-5">J. S. Bell, "Bertlmann's socks and the nature of reality", <em>J. Phys. Colloques</em> 42, C2-41 (1981). <a href="https://doi.org/10.1051/jphyscol:1981202">doi</a></li>
+        <li id="ref-6">N. D. Mermin, "Is the moon there when nobody looks? Reality and the quantum theory", <em>Phys. Today</em> 38(4), 38 (1985). <a href="https://doi.org/10.1063/1.880968">doi</a></li>
+        <li id="ref-7">J. S. Bell, "On the Einstein Podolsky Rosen paradox", <em>Physics Physique Fizika</em> 1, 195 (1964). <a href="https://doi.org/10.1103/PhysicsPhysiqueFizika.1.195">doi</a></li>
+        <li id="ref-8">J. F. Clauser, M. A. Horne, A. Shimony and R. A. Holt, "Proposed experiment to test local hidden-variable theories", <em>Phys. Rev. Lett.</em> 23, 880 (1969). <a href="https://doi.org/10.1103/PhysRevLett.23.880">doi</a></li>
+        <li id="ref-9">B. S. Cirel'son, "Quantum generalizations of Bell's inequality", <em>Lett. Math. Phys.</em> 4, 93 (1980). <a href="https://doi.org/10.1007/BF00417500">doi</a></li>
+        <li id="ref-10">S. J. Freedman and J. F. Clauser, "Experimental test of local hidden-variable theories", <em>Phys. Rev. Lett.</em> 28, 938 (1972). <a href="https://doi.org/10.1103/PhysRevLett.28.938">doi</a></li>
+        <li id="ref-11">A. Aspect, J. Dalibard and G. Roger, "Experimental test of Bell's inequalities using time-varying analyzers", <em>Phys. Rev. Lett.</em> 49, 1804 (1982). <a href="https://doi.org/10.1103/PhysRevLett.49.1804">doi</a></li>
+        <li id="ref-12">G. Weihs, T. Jennewein, C. Simon, H. Weinfurter and A. Zeilinger, "Violation of Bell's inequality under strict Einstein locality conditions", <em>Phys. Rev. Lett.</em> 81, 5039 (1998). <a href="https://doi.org/10.1103/PhysRevLett.81.5039">doi</a></li>
+        <li id="ref-13">A. Garg and N. D. Mermin, "Detector inefficiencies in the Einstein-Podolsky-Rosen experiment", <em>Phys. Rev. D</em> 35, 3831 (1987). <a href="https://doi.org/10.1103/PhysRevD.35.3831">doi</a></li>
+        <li id="ref-14">M. Giustina, M. A. M. Versteegh, S. Wengerowsky <em>et al.</em>, "Significant-loophole-free test of Bell's theorem with entangled photons", <em>Phys. Rev. Lett.</em> 115, 250401 (2015). <a href="https://doi.org/10.1103/PhysRevLett.115.250401">doi</a></li>
+        <li id="ref-15">L. K. Shalm, E. Meyer-Scott <em>et al.</em>, "Strong loophole-free test of local realism", <em>Phys. Rev. Lett.</em> 115, 250402 (2015). <a href="https://doi.org/10.1103/PhysRevLett.115.250402">doi</a></li>
+        <li id="ref-16">B. Hensen, H. Bernien, A. E. Dréau <em>et al.</em>, "Loophole-free Bell inequality violation using electron spins separated by 1.3 kilometres", <em>Nature</em> 526, 682 (2015). <a href="https://doi.org/10.1038/nature15759">doi</a></li>
+        <li id="ref-17">S. Storz <em>et al.</em>, "Loophole-free Bell inequality violation with superconducting circuits", <em>Nature</em> 617, 265 (2023). <a href="https://doi.org/10.1038/s41586-023-05885-0">doi</a></li>
+        <li id="ref-18">Qiskit contributors, <em>Qiskit: an open-source framework for quantum computing</em> (2026). <a href="https://github.com/Qiskit/qiskit">github.com/Qiskit/qiskit</a></li>
+        <li id="ref-19">QuTech, <em>Quantum Inspire: superconducting backends</em> (2026). <a href="https://www.quantum-inspire.com/backends/transmons/">quantum-inspire.com</a></li>
+        <li id="ref-20">QuTech, <em>Quantum Inspire adds new open-architecture quantum processor: Tuna-17</em> (2026). <a href="https://qutech.nl/2026/07/07/quantum-inspire-adds-new-open-architecture-quantum-processor-tuna-17/">qutech.nl</a></li>
+        <li id="ref-21">T. Rybotycki, T. Białecki, J. Batle and A. Bednorz, "Violation of no-signaling on a public quantum computer", <em>Adv. Quantum Technol.</em> 8, 2400661 (2025). <a href="https://doi.org/10.1002/qute.202400661">doi</a> · <a href="https://arxiv.org/abs/2409.11348">arXiv:2409.11348</a></li>
+        <li id="ref-22">A. Bednorz, J. Batle, T. Białecki and J. K. Korbicz, "Closing objectivity loophole in Bell tests on a public quantum computer" (2026). <a href="https://arxiv.org/abs/2506.08940">arXiv:2506.08940</a></li>
+        <li id="ref-23">A. Tavakoli, A. Pozas-Kerstjens, M.-X. Luo and M.-O. Renou, "Bell nonlocality in networks", <em>Rep. Prog. Phys.</em> 85, 056001 (2022). <a href="https://arxiv.org/abs/2104.10700">arXiv:2104.10700</a></li>
+        <li id="ref-24">V. Gitton and R. Renner, "The Elegant Joint Measurement is non-classical in the triangle network" (2025). <a href="https://arxiv.org/abs/2510.15143">arXiv:2510.15143</a></li>
+        <li id="ref-25">E. Bäumer, N. Gisin and A. Tavakoli, "Demonstrating the power of quantum computers, certification of highly entangled measurements and scalable quantum nonlocality", <em>npj Quantum Inf.</em> 7, 117 (2021). <a href="https://doi.org/10.1038/s41534-021-00450-x">doi</a> · <a href="https://arxiv.org/abs/2009.14028">arXiv:2009.14028</a></li>
+        <li id="ref-26">E. Bäumer, V. Gitton, T. Kriváchy, N. Gisin and R. Renner, "Exploring the local landscape in the triangle network", <em>Phys. Rev. A</em> 111, 052453 (2025). <a href="https://doi.org/10.1103/PhysRevA.111.052453">doi</a> · <a href="https://arxiv.org/abs/2405.08939">arXiv:2405.08939</a></li>
+        <li id="ref-27">N.-N. Wang, C. Zhang, H. Cao <em>et al.</em>, "Experimental genuine quantum nonlocality in the triangle network", <em>Phys. Rev. Lett.</em> (2026). <a href="https://arxiv.org/abs/2401.15428">arXiv:2401.15428</a></li>
+        <li id="ref-28">L. Adachi and L. B. Ho, "Measurement geometry as a resource for certifying network nonlocality" (2026). <a href="https://arxiv.org/abs/2607.04656">arXiv:2607.04656</a></li>
+        <li id="ref-29">Quantum Rings, <em>Open Quantum: quantum computing for all</em> (2026). <a href="https://www.openquantum.com/">openquantum.com</a></li>
+      </ol>
+
+      <p class="post-end">
+        <a href="index.html">← all posts</a> ·
+        <a href="../files/preprints/wangchuk-bell-inequality-quantum-chip.pdf">PDF version</a>
+      </p>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="measure">© 2026 Tashi Wangchuk</div>
+  </footer>
+
+</body>
+</html>

@@ -15,6 +15,7 @@ is exactly what visitors see.
 | `teaching.html` | Lecture notes, davidtong.org style |
 | `blog/index.html` | "thoughts" — post list (newest first) |
 | `blog/YYYY-MM-DD-*.html` | One file per blog post |
+| `blog/figures/<post>/` | Figures (SVG) for one post |
 | `courses/*.html` | One page per course, linked from `teaching.html` |
 | `css/style.css` | The one stylesheet — fonts, colors, spacing |
 | `js/theme.js` | The light/dark toggle (the only JavaScript) |
@@ -32,6 +33,9 @@ explaining what to copy and change.
 - **Add a course**: copy a `course-card` block in `teaching.html`, then
   duplicate a page in `courses/` and point the card at it. PDFs go in
   `files/teaching/`.
+- **Post with equations**: copy the `<head>` of
+  `blog/2026-10-27-bell-inequality-quantum-chip.html`; it loads KaTeX, so
+  `$...$` and `\[...\]` render as maths. Put figures in `blog/figures/<post>/`.
 - **New blog post**: duplicate a file in `blog/`, rename with today's
   date, then add one `post-card` box at the top of `blog/index.html`.
 - **Change colors**: edit the variables at the top of `css/style.css`.
