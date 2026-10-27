@@ -597,7 +597,7 @@ a.glow-box:hover .material-title { color: var(--accent-hover); }
 .post-body p,
 .post-body li { line-height: 1.5; }
 
-/* the sticky header would hide a heading or equation jumped to by a link */
+/* a little breathing room above a heading or equation jumped to by a link */
 .post-body [id] { scroll-margin-top: 5.5rem; }
 
 .post-note {
@@ -624,7 +624,10 @@ a.glow-box:hover .material-title { color: var(--accent-hover); }
 /* display equations scroll sideways on phones instead of overflowing */
 .eq { margin: 0.3em 0 1em; }
 .katex-display { overflow-x: auto; overflow-y: hidden; margin: 0; padding: 0.2em 0; }
-.katex { font-size: 1.04em; }
+/* maths at exactly the text size. KaTeX's own stylesheet sets .katex to
+   1.21em and loads after this file, so this rule needs the extra
+   .post-body to win. Both use Computer Modern, so 1em matches the text. */
+.post-body .katex { font-size: 1em; }
 
 /* numbered figures */
 .post-fig { margin: 2.2rem 0; }
